@@ -1,13 +1,13 @@
-package com.potatorider.potatorider;
+package com.potatorider.deliveryinfoservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PotatoRiderApplication {
+public class DeliveryInfoServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(PotatoRiderApplication.class, args);
+        SpringApplication.run(DeliveryInfoServiceApplication.class, args);
     }
 
 }
