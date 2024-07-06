@@ -113,7 +113,7 @@ task generateJacocoTestCoverage(type: JacocoReport) {
 }
 
 ext {
-    set('springCloudVersion', "2023.0.2")
+    set('springCloudVersion', "2021.0.1")
 }
 
 dependencyManagement {
@@ -139,7 +139,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'org.testcontainers:junit-jupiter'
-    testImplementation 'org.testcontainers:mongodb'
+    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.13.1'
     testImplementation 'org.springframework.amqp:spring-rabbit-test'
 
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
