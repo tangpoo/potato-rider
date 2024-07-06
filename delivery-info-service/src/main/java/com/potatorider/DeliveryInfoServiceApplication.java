@@ -1,4 +1,4 @@
-package com.potatorider.deliveryinfoservice;
+package com.potatorider;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
