@@ -1,5 +1,6 @@
 package com.potatorider.deliveryinfoservice;
 
+import com.potatorider.DeliveryInfoServiceApplication;
 import org.springframework.boot.SpringApplication;
 
 public class TestDeliveryInfoServiceApplication {
