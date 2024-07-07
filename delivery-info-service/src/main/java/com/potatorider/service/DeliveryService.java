@@ -1,5 +1,6 @@
 package com.potatorider.service;
 
+import static com.potatorider.domain.DeliveryStatus.ACCEPT;
 import static com.potatorider.domain.DeliveryStatus.REQUEST;
 
 import com.potatorider.domain.Delivery;
@@ -18,15 +19,27 @@ public class DeliveryService {
     private final DeliveryPublisher deliveryPublisher;
 
     public Mono<Delivery> saveDelivery(final Delivery delivery) {
-        return deliveryRepository.save(delivery).flatMap(deliveryPublisher::sendAddDeliveryEvent);
+        return deliveryRepository.save(delivery)
+            .flatMap(deliveryPublisher::sendAddDeliveryEvent);
     }
 
-    public Mono<Delivery> acceptDelivery(final Delivery delivery) {
-        return Mono.just(delivery)
+    public Mono<Delivery> acceptDelivery(final String deliveryId) {
+        return deliveryRepository
+            .findById(deliveryId)
             .flatMap(DeliveryValidator::statusIsNotNull)
             .flatMap(DeliveryValidator::statusIsRequest)
-            .flatMap(del -> deliveryRepository.save(delivery))
+            .flatMap(Delivery::nextStatus)
+            .flatMap(deliveryRepository::save)
             .flatMap(deliveryPublisher::sendSetRiderEvent);
+    }
+
+    public Mono<Delivery> setDeliveryRider(final String deliveryId) {
+        return deliveryRepository
+            .findById(deliveryId)
+            .flatMap(DeliveryValidator::statusIsNotNull)
+            .flatMap(DeliveryValidator::statusIsAccept)
+            .flatMap(Delivery::nextStatus)
+            .flatMap(deliveryRepository::save);
     }
 
     private static class DeliveryValidator {
@@ -41,6 +54,12 @@ public class DeliveryService {
             return delivery.getDeliveryStatus().equals(REQUEST)
                 ? Mono.just(delivery)
                 : Mono.error(new IllegalStateException("주문 상태가 REQUEST 가 아닙니다."));
+        }
+
+        public static Mono<Delivery> statusIsAccept(Delivery delivery) {
+            return delivery.getDeliveryStatus().equals(ACCEPT)
+                ? Mono.just(delivery)
+                : Mono.error(new IllegalStateException("주문 상태가 Accept 가 아닙니다."));
         }
     }
 }

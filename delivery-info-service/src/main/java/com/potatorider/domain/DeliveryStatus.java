@@ -1,5 +1,7 @@
 package com.potatorider.domain;
 
+import reactor.core.publisher.Mono;
+
 public enum DeliveryStatus {
     REQUEST("주문요청", "주문요청"),
     ACCEPT("주문승인", "주문승인"),
@@ -13,5 +15,14 @@ public enum DeliveryStatus {
     DeliveryStatus(final String shopPerspective, final String customerPerspective) {
         this.shopPerspective = shopPerspective;
         this.customerPerspective = customerPerspective;
+    }
+
+    public DeliveryStatus getNext() {
+        if (this.isLast()) return COMPLETE;
+        return DeliveryStatus.values()[this.ordinal() + 1];
+    }
+
+    private boolean isLast() {
+        return DeliveryStatus.values().length - 1 == this.ordinal();
     }
 }

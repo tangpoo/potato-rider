@@ -6,6 +6,7 @@ import com.potatorider.service.DeliveryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,8 +27,13 @@ public class DeliveryController implements DeliveryControllerSwaggerDoc {
         return deliveryService.saveDelivery(delivery);
     }
 
-    @PutMapping("/accept")
-    public Mono<Delivery> acceptDelivery(@RequestBody @Valid Delivery delivery) {
-        return deliveryService.acceptDelivery(delivery);
+    @PutMapping("/{deliveryId}/accept")
+    public Mono<Delivery> acceptDelivery(@PathVariable String deliveryId) {
+        return deliveryService.acceptDelivery(deliveryId);
+    }
+
+    @PutMapping("/{deliveryId}/rider")
+    public Mono<Delivery> setDeliveryRider(@PathVariable String deliveryId) {
+        return deliveryService.setDeliveryRider(deliveryId);
     }
 }
