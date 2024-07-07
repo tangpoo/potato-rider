@@ -1,5 +1,6 @@
 package com.potatorider.controller;
 
+import com.potatorider.config.swagger.DeliveryControllerSwaggerDoc;
 import com.potatorider.domain.Delivery;
 import com.potatorider.service.DeliveryService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/delivery")
 @Slf4j
-public class DeliveryController {
+public class DeliveryController implements DeliveryControllerSwaggerDoc {
 
     private final DeliveryService deliveryService;
 
