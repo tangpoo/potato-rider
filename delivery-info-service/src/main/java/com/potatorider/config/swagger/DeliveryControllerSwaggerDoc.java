@@ -9,5 +9,5 @@ import reactor.core.publisher.Mono;
 public interface DeliveryControllerSwaggerDoc {
 
     @Operation(summary = "신규배달 저장")
-    public Mono<Delivery> saveDelivery(Delivery delivery);
+    Mono<Delivery> saveDelivery(Delivery delivery);
 }
