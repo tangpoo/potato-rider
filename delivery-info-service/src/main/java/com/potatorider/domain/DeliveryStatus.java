@@ -14,4 +14,15 @@ public enum DeliveryStatus {
         this.shopPerspective = shopPerspective;
         this.customerPerspective = customerPerspective;
     }
+
+    public DeliveryStatus getNext() {
+        if (this.isLast()) {
+            return COMPLETE;
+        }
+        return DeliveryStatus.values()[this.ordinal() + 1];
+    }
+
+    private boolean isLast() {
+        return DeliveryStatus.values().length - 1 == this.ordinal();
+    }
 }

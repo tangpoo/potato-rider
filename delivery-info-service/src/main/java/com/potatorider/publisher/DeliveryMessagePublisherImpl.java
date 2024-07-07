@@ -16,12 +16,29 @@ public class DeliveryMessagePublisherImpl implements DeliveryPublisher {
     private final AmqpTemplate messageQueue;
 
     private final String shopExchange = "messageQueue.exchange.shop";
+    private final String agencyExchange = "messageQueue.exchange.agency";
 
     @Override
     public Mono<Delivery> sendAddDeliveryEvent(final Delivery delivery) {
         return Mono.just(delivery)
             .subscribeOn(Schedulers.boundedElastic())
             .flatMap(this::publishAddDeliveryEvent);
+    }
+
+    @Override
+    public Mono<Delivery> sendSetRiderEvent(final Delivery delivery) {
+        return Mono.just(delivery)
+            .subscribeOn(Schedulers.boundedElastic())
+            .flatMap(this::publishSetRiderEvent);
+    }
+
+    private Mono<Delivery> publishSetRiderEvent(Delivery delivery) {
+        return Mono.fromCallable(
+            () -> {
+                this.messageQueue.convertAndSend(agencyExchange);
+                return delivery;
+            }
+        );
     }
 
     private Mono<Delivery> publishAddDeliveryEvent(Delivery delivery) {
