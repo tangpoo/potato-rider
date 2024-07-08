@@ -6,13 +6,16 @@ import com.potatorider.service.DeliveryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -51,5 +54,13 @@ public class DeliveryController implements DeliveryControllerSwaggerDoc {
     @GetMapping("/{deliveryId}")
     public Mono<Delivery> findDelivery(@PathVariable String deliveryId) {
         return deliveryService.findDelivery(deliveryId);
+    }
+
+    @GetMapping
+    public Flux<Delivery> findAllDelivery(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "1") int size
+    ) {
+        return deliveryService.findAllDelivery(page, size);
     }
 }
