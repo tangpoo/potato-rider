@@ -6,6 +6,7 @@ import com.potatorider.service.DeliveryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -45,5 +46,10 @@ public class DeliveryController implements DeliveryControllerSwaggerDoc {
     @PutMapping("/{deliveryId}/complete")
     public Mono<Delivery> completeDelivery(@PathVariable String deliveryId) {
         return deliveryService.completeDelivery(deliveryId);
+    }
+
+    @GetMapping("/{deliveryId}")
+    public Mono<Delivery> findDelivery(@PathVariable String deliveryId) {
+        return deliveryService.findDelivery(deliveryId);
     }
 }

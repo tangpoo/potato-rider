@@ -7,6 +7,7 @@ import static com.potatorider.domain.DeliveryStatus.RIDER_SET;
 
 import com.potatorider.domain.Delivery;
 import com.potatorider.domain.DeliveryStatus;
+import com.potatorider.exception.DeliveryNotFountException;
 import com.potatorider.publisher.DeliveryPublisher;
 import com.potatorider.repository.DeliveryRepository;
 import java.util.Objects;
@@ -59,6 +60,12 @@ public class DeliveryService {
             .flatMap((Delivery delivery) -> DeliveryValidator.statusIsExpected(delivery, COMPLETE))
             .flatMap(del -> Mono.just(del.nextStatus()))
             .flatMap(deliveryRepository::save);
+    }
+
+    public Mono<Delivery> findDelivery(final String deliveryId) {
+        return deliveryRepository
+            .findById(deliveryId)
+            .switchIfEmpty(Mono.error(DeliveryNotFountException::new));
     }
 
     private static class DeliveryValidator {
