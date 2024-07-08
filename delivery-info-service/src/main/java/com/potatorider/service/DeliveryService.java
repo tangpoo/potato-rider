@@ -1,14 +1,20 @@
 package com.potatorider.service;
 
 import static com.potatorider.domain.DeliveryStatus.ACCEPT;
+import static com.potatorider.domain.DeliveryStatus.COMPLETE;
 import static com.potatorider.domain.DeliveryStatus.REQUEST;
+import static com.potatorider.domain.DeliveryStatus.RIDER_SET;
 
 import com.potatorider.domain.Delivery;
+import com.potatorider.domain.DeliveryStatus;
+import com.potatorider.exception.DeliveryNotFountException;
 import com.potatorider.publisher.DeliveryPublisher;
 import com.potatorider.repository.DeliveryRepository;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -27,8 +33,8 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .flatMap(DeliveryValidator::statusIsNotNull)
-            .flatMap(DeliveryValidator::statusIsRequest)
-            .flatMap(Delivery::nextStatus)
+            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, REQUEST))
+            .map(Delivery::nextStatus)
             .flatMap(deliveryRepository::save)
             .flatMap(deliveryPublisher::sendSetRiderEvent);
     }
@@ -37,9 +43,38 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .flatMap(DeliveryValidator::statusIsNotNull)
-            .flatMap(DeliveryValidator::statusIsAccept)
-            .flatMap(Delivery::nextStatus)
+            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, ACCEPT))
+            .map(Delivery::nextStatus)
             .flatMap(deliveryRepository::save);
+    }
+
+    public Mono<Delivery> pickUpDelivery(final String deliveryId) {
+        return deliveryRepository
+            .findById(deliveryId)
+            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, RIDER_SET))
+            .map(Delivery::nextStatus)
+            .map(Delivery::setPickupTime)
+            .flatMap(deliveryRepository::save);
+    }
+
+    public Mono<Delivery> completeDelivery(final String deliveryId) {
+        return deliveryRepository
+            .findById(deliveryId)
+            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, COMPLETE)
+            .map(Delivery::nextStatus)
+            .map(Delivery::setFinishTime)
+            .flatMap(deliveryRepository::save));
+    }
+
+    public Mono<Delivery> findDelivery(final String deliveryId) {
+        return deliveryRepository
+            .findById(deliveryId)
+            .switchIfEmpty(Mono.error(DeliveryNotFountException::new));
+    }
+
+    public Flux<Delivery> findAllDelivery(final int page, final int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return deliveryRepository.findAllByOrderIdContaining("", pageRequest);
     }
 
     private static class DeliveryValidator {
@@ -50,16 +85,11 @@ public class DeliveryService {
                 : Mono.just(delivery);
         }
 
-        public static Mono<Delivery> statusIsRequest(Delivery delivery) {
-            return delivery.getDeliveryStatus().equals(REQUEST)
+        public static Mono<Delivery> statusIsExpected(Delivery delivery, DeliveryStatus expected) {
+            return delivery.getDeliveryStatus().equals(expected)
                 ? Mono.just(delivery)
-                : Mono.error(new IllegalStateException("주문 상태가 REQUEST 가 아닙니다."));
-        }
-
-        public static Mono<Delivery> statusIsAccept(Delivery delivery) {
-            return delivery.getDeliveryStatus().equals(ACCEPT)
-                ? Mono.just(delivery)
-                : Mono.error(new IllegalStateException("주문 상태가 Accept 가 아닙니다."));
+                : Mono.error(
+                    new IllegalStateException(String.format("주문 상태가 %s 가 아닙니다.", expected)));
         }
     }
 }
