@@ -33,8 +33,8 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .flatMap(DeliveryValidator::statusIsNotNull)
-            .flatMap((Delivery delivery) -> DeliveryValidator.statusIsExpected(delivery, REQUEST))
-            .flatMap(del -> Mono.just(del.nextStatus()))
+            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, REQUEST))
+            .map(Delivery::nextStatus)
             .flatMap(deliveryRepository::save)
             .flatMap(deliveryPublisher::sendSetRiderEvent);
     }
@@ -43,25 +43,27 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .flatMap(DeliveryValidator::statusIsNotNull)
-            .flatMap((Delivery delivery) -> DeliveryValidator.statusIsExpected(delivery, ACCEPT))
-            .flatMap(del -> Mono.just(del.nextStatus()))
+            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, ACCEPT))
+            .map(Delivery::nextStatus)
             .flatMap(deliveryRepository::save);
     }
 
     public Mono<Delivery> pickUpDelivery(final String deliveryId) {
         return deliveryRepository
             .findById(deliveryId)
-            .flatMap((Delivery delivery) -> DeliveryValidator.statusIsExpected(delivery, RIDER_SET))
-            .flatMap(del -> Mono.just(del.nextStatus()))
+            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, RIDER_SET))
+            .map(Delivery::nextStatus)
+            .map(Delivery::setPickupTime)
             .flatMap(deliveryRepository::save);
     }
 
     public Mono<Delivery> completeDelivery(final String deliveryId) {
         return deliveryRepository
             .findById(deliveryId)
-            .flatMap((Delivery delivery) -> DeliveryValidator.statusIsExpected(delivery, COMPLETE))
-            .flatMap(del -> Mono.just(del.nextStatus()))
-            .flatMap(deliveryRepository::save);
+            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, COMPLETE)
+            .map(Delivery::nextStatus)
+            .map(Delivery::setFinishTime)
+            .flatMap(deliveryRepository::save));
     }
 
     public Mono<Delivery> findDelivery(final String deliveryId) {
