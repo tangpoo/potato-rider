@@ -74,7 +74,7 @@ public class DeliveryService {
 
     public Flux<Delivery> findAllDelivery(final int page, final int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        return deliveryRepository.findAll(pageRequest);
+        return deliveryRepository.findAllByOrderIdContaining("", pageRequest);
     }
 
     private static class DeliveryValidator {
