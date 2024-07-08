@@ -12,7 +12,9 @@ import com.potatorider.publisher.DeliveryPublisher;
 import com.potatorider.repository.DeliveryRepository;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -66,6 +68,11 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .switchIfEmpty(Mono.error(DeliveryNotFountException::new));
+    }
+
+    public Flux<Delivery> findAllDelivery(final int page, final int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return deliveryRepository.findAll(pageRequest);
     }
 
     private static class DeliveryValidator {
