@@ -2,8 +2,10 @@ package com.potatorider.service;
 
 import static com.potatorider.domain.DeliveryStatus.ACCEPT;
 import static com.potatorider.domain.DeliveryStatus.REQUEST;
+import static com.potatorider.domain.DeliveryStatus.RIDER_SET;
 
 import com.potatorider.domain.Delivery;
+import com.potatorider.domain.DeliveryStatus;
 import com.potatorider.publisher.DeliveryPublisher;
 import com.potatorider.repository.DeliveryRepository;
 import java.util.Objects;
@@ -27,7 +29,7 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .flatMap(DeliveryValidator::statusIsNotNull)
-            .flatMap(DeliveryValidator::statusIsRequest)
+            .flatMap((Delivery delivery) -> DeliveryValidator.statusIsExpected(delivery, REQUEST))
             .flatMap(Delivery::nextStatus)
             .flatMap(deliveryRepository::save)
             .flatMap(deliveryPublisher::sendSetRiderEvent);
@@ -37,7 +39,15 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .flatMap(DeliveryValidator::statusIsNotNull)
-            .flatMap(DeliveryValidator::statusIsAccept)
+            .flatMap((Delivery delivery) -> DeliveryValidator.statusIsExpected(delivery, ACCEPT))
+            .flatMap(Delivery::nextStatus)
+            .flatMap(deliveryRepository::save);
+    }
+
+    public Mono<Delivery> pickUpDelivery(final String deliveryId) {
+        return deliveryRepository
+            .findById(deliveryId)
+            .flatMap((Delivery delivery) -> DeliveryValidator.statusIsExpected(delivery, RIDER_SET))
             .flatMap(Delivery::nextStatus)
             .flatMap(deliveryRepository::save);
     }
@@ -50,16 +60,10 @@ public class DeliveryService {
                 : Mono.just(delivery);
         }
 
-        public static Mono<Delivery> statusIsRequest(Delivery delivery) {
-            return delivery.getDeliveryStatus().equals(REQUEST)
+        public static Mono<Delivery> statusIsExpected(Delivery delivery, DeliveryStatus expected) {
+            return delivery.getDeliveryStatus().equals(expected)
                 ? Mono.just(delivery)
-                : Mono.error(new IllegalStateException("주문 상태가 REQUEST 가 아닙니다."));
-        }
-
-        public static Mono<Delivery> statusIsAccept(Delivery delivery) {
-            return delivery.getDeliveryStatus().equals(ACCEPT)
-                ? Mono.just(delivery)
-                : Mono.error(new IllegalStateException("주문 상태가 Accept 가 아닙니다."));
+                : Mono.error(new IllegalStateException(String.format("주문 상태가 %s 가 아닙니다.", expected)));
         }
     }
 }
