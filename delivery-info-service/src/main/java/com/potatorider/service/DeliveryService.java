@@ -31,7 +31,7 @@ public class DeliveryService {
             .findById(deliveryId)
             .flatMap(DeliveryValidator::statusIsNotNull)
             .flatMap((Delivery delivery) -> DeliveryValidator.statusIsExpected(delivery, REQUEST))
-            .flatMap(Delivery::nextStatus)
+            .flatMap(del -> Mono.just(del.nextStatus()))
             .flatMap(deliveryRepository::save)
             .flatMap(deliveryPublisher::sendSetRiderEvent);
     }
@@ -41,7 +41,7 @@ public class DeliveryService {
             .findById(deliveryId)
             .flatMap(DeliveryValidator::statusIsNotNull)
             .flatMap((Delivery delivery) -> DeliveryValidator.statusIsExpected(delivery, ACCEPT))
-            .flatMap(Delivery::nextStatus)
+            .flatMap(del -> Mono.just(del.nextStatus()))
             .flatMap(deliveryRepository::save);
     }
 
@@ -49,7 +49,7 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .flatMap((Delivery delivery) -> DeliveryValidator.statusIsExpected(delivery, RIDER_SET))
-            .flatMap(Delivery::nextStatus)
+            .flatMap(del -> Mono.just(del.nextStatus()))
             .flatMap(deliveryRepository::save);
     }
 
@@ -57,7 +57,7 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .flatMap((Delivery delivery) -> DeliveryValidator.statusIsExpected(delivery, COMPLETE))
-            .flatMap(Delivery::nextStatus)
+            .flatMap(del -> Mono.just(del.nextStatus()))
             .flatMap(deliveryRepository::save);
     }
 
@@ -72,7 +72,8 @@ public class DeliveryService {
         public static Mono<Delivery> statusIsExpected(Delivery delivery, DeliveryStatus expected) {
             return delivery.getDeliveryStatus().equals(expected)
                 ? Mono.just(delivery)
-                : Mono.error(new IllegalStateException(String.format("주문 상태가 %s 가 아닙니다.", expected)));
+                : Mono.error(
+                    new IllegalStateException(String.format("주문 상태가 %s 가 아닙니다.", expected)));
         }
     }
 }
