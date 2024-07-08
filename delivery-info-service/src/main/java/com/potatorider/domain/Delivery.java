@@ -46,8 +46,8 @@ public class Delivery {
 
     private LocalDateTime finishTime;
 
-    public Mono<Delivery> nextStatus() {
+    public Delivery nextStatus() {
         deliveryStatus = deliveryStatus.getNext();
-        return Mono.just(this);
+        return this;
     }
 }
