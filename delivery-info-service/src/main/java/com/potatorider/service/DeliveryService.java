@@ -1,6 +1,7 @@
 package com.potatorider.service;
 
 import static com.potatorider.domain.DeliveryStatus.ACCEPT;
+import static com.potatorider.domain.DeliveryStatus.COMPLETE;
 import static com.potatorider.domain.DeliveryStatus.REQUEST;
 import static com.potatorider.domain.DeliveryStatus.RIDER_SET;
 
@@ -48,6 +49,14 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .flatMap((Delivery delivery) -> DeliveryValidator.statusIsExpected(delivery, RIDER_SET))
+            .flatMap(Delivery::nextStatus)
+            .flatMap(deliveryRepository::save);
+    }
+
+    public Mono<Delivery> completeDelivery(final String deliveryId) {
+        return deliveryRepository
+            .findById(deliveryId)
+            .flatMap((Delivery delivery) -> DeliveryValidator.statusIsExpected(delivery, COMPLETE))
             .flatMap(Delivery::nextStatus)
             .flatMap(deliveryRepository::save);
     }
