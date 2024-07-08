@@ -36,4 +36,9 @@ public class DeliveryController implements DeliveryControllerSwaggerDoc {
     public Mono<Delivery> setDeliveryRider(@PathVariable String deliveryId) {
         return deliveryService.setDeliveryRider(deliveryId);
     }
+
+    @PutMapping("/{deliveryId}/pickup")
+    public Mono<Delivery> pickUpDelivery(@PathVariable String deliveryId) {
+        return deliveryService.pickUpDelivery(deliveryId);
+    }
 }
