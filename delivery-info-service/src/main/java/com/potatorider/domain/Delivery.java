@@ -50,4 +50,14 @@ public class Delivery {
         deliveryStatus = deliveryStatus.getNext();
         return this;
     }
+
+    public Delivery setPickupTime() {
+        pickupTime = LocalDateTime.now();
+        return this;
+    }
+
+    public Delivery setFinishTime() {
+        finishTime = LocalDateTime.now();
+        return this;
+    }
 }
