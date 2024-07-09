@@ -13,6 +13,7 @@ import com.potatorider.repository.DeliveryRepository;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -61,9 +62,9 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, COMPLETE)
-            .map(Delivery::nextStatus)
-            .map(Delivery::setFinishTime)
-            .flatMap(deliveryRepository::save));
+                .map(Delivery::nextStatus)
+                .map(Delivery::setFinishTime)
+                .flatMap(deliveryRepository::save));
     }
 
     public Mono<Delivery> findDelivery(final String deliveryId) {
@@ -73,8 +74,8 @@ public class DeliveryService {
     }
 
     public Flux<Delivery> findAllDelivery(final int page, final int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        return deliveryRepository.findAllByOrderIdContaining("", pageRequest);
+        Pageable pageable = PageRequest.of(page, size);
+        return deliveryRepository.findAllBy(pageable);
     }
 
     private static class DeliveryValidator {
