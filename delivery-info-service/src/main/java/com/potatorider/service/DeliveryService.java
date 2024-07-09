@@ -8,14 +8,20 @@ import static com.potatorider.domain.DeliveryStatus.RIDER_SET;
 import com.potatorider.domain.Delivery;
 import com.potatorider.domain.DeliveryStatus;
 import com.potatorider.exception.DeliveryNotFountException;
+import com.potatorider.exception.RetryExhaustedException;
 import com.potatorider.publisher.DeliveryPublisher;
 import com.potatorider.repository.DeliveryRepository;
+import java.time.Duration;
 import java.util.Objects;
+import java.util.concurrent.TimeoutException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
+import reactor.util.retry.RetryBackoffSpec;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +32,8 @@ public class DeliveryService {
 
     public Mono<Delivery> saveDelivery(final Delivery delivery) {
         return deliveryRepository.save(delivery)
-            .flatMap(deliveryPublisher::sendAddDeliveryEvent);
+            .flatMap(del -> deliveryPublisher.sendAddDeliveryEvent(del)
+                .retryWhen(retryBackoffSpec()));
     }
 
     public Mono<Delivery> acceptDelivery(final String deliveryId) {
@@ -36,7 +43,8 @@ public class DeliveryService {
             .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, REQUEST))
             .map(Delivery::nextStatus)
             .flatMap(deliveryRepository::save)
-            .flatMap(deliveryPublisher::sendSetRiderEvent);
+            .flatMap(del -> deliveryPublisher.sendSetRiderEvent(del)
+                .retryWhen(retryBackoffSpec()));
     }
 
     public Mono<Delivery> setDeliveryRider(final String deliveryId) {
@@ -61,9 +69,9 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, COMPLETE)
-            .map(Delivery::nextStatus)
-            .map(Delivery::setFinishTime)
-            .flatMap(deliveryRepository::save));
+                .map(Delivery::nextStatus)
+                .map(Delivery::setFinishTime)
+                .flatMap(deliveryRepository::save));
     }
 
     public Mono<Delivery> findDelivery(final String deliveryId) {
@@ -73,8 +81,19 @@ public class DeliveryService {
     }
 
     public Flux<Delivery> findAllDelivery(final int page, final int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        return deliveryRepository.findAllByOrderIdContaining("", pageRequest);
+        Pageable pageable = PageRequest.of(page, size);
+        return deliveryRepository.findAllBy(pageable);
+    }
+
+    Long MAX_ATTEMPTS = 3L;
+    Duration FIXED_DELAY = Duration.ofMillis(500);
+
+    private RetryBackoffSpec retryBackoffSpec() {
+        return Retry.fixedDelay(MAX_ATTEMPTS, FIXED_DELAY)
+            .filter(
+                (ex) -> ex instanceof TimeoutException)
+            .onRetryExhaustedThrow(
+                (((retryBackoffSpec, retrySignal) -> new RetryExhaustedException(retrySignal))));
     }
 
     private static class DeliveryValidator {
