@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import reactor.core.publisher.Mono;
@@ -11,6 +12,7 @@ import reactor.core.publisher.Mono;
 @Document
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Delivery {
 
     @Id
@@ -45,6 +47,11 @@ public class Delivery {
     private LocalDateTime pickupTime;
 
     private LocalDateTime finishTime;
+
+    public Delivery setDeliveryStatusRequest(){
+        deliveryStatus = DeliveryStatus.REQUEST;
+        return this;
+    }
 
     public Delivery nextStatus() {
         deliveryStatus = deliveryStatus.getNext();
