@@ -35,7 +35,7 @@ public class DeliveryMessagePublisherImpl implements DeliveryPublisher {
     private Mono<Delivery> publishSetRiderEvent(Delivery delivery) {
         return Mono.fromCallable(
             () -> {
-                this.messageQueue.convertAndSend(agencyExchange);
+                messageQueue.convertAndSend(agencyExchange, delivery);
                 return delivery;
             }
         );
@@ -44,7 +44,7 @@ public class DeliveryMessagePublisherImpl implements DeliveryPublisher {
     private Mono<Delivery> publishAddDeliveryEvent(Delivery delivery) {
         return Mono.fromCallable(
             () -> {
-                this.messageQueue.convertAndSend(shopExchange, delivery);
+                messageQueue.convertAndSend(shopExchange, delivery);
                 return delivery;
             }
         );

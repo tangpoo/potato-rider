@@ -2,6 +2,7 @@ package com.potatorider.service;
 
 import static com.potatorider.domain.DeliveryStatus.ACCEPT;
 import static com.potatorider.domain.DeliveryStatus.COMPLETE;
+import static com.potatorider.domain.DeliveryStatus.PICKED_UP;
 import static com.potatorider.domain.DeliveryStatus.REQUEST;
 import static com.potatorider.domain.DeliveryStatus.RIDER_SET;
 
@@ -12,7 +13,6 @@ import com.potatorider.exception.RetryExhaustedException;
 import com.potatorider.publisher.DeliveryPublisher;
 import com.potatorider.repository.DeliveryRepository;
 import java.time.Duration;
-import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -29,9 +29,11 @@ public class DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
     private final DeliveryPublisher deliveryPublisher;
+    Long MAX_ATTEMPTS = 3L;
+    Duration FIXED_DELAY = Duration.ofMillis(500);
 
     public Mono<Delivery> saveDelivery(final Delivery delivery) {
-        return deliveryRepository.save(delivery)
+        return deliveryRepository.save(delivery.setDeliveryStatusRequest())
             .flatMap(del -> deliveryPublisher.sendAddDeliveryEvent(del)
                 .retryWhen(retryBackoffSpec()));
     }
@@ -39,7 +41,6 @@ public class DeliveryService {
     public Mono<Delivery> acceptDelivery(final String deliveryId) {
         return deliveryRepository
             .findById(deliveryId)
-            .flatMap(DeliveryValidator::statusIsNotNull)
             .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, REQUEST))
             .map(Delivery::nextStatus)
             .flatMap(deliveryRepository::save)
@@ -50,7 +51,6 @@ public class DeliveryService {
     public Mono<Delivery> setDeliveryRider(final String deliveryId) {
         return deliveryRepository
             .findById(deliveryId)
-            .flatMap(DeliveryValidator::statusIsNotNull)
             .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, ACCEPT))
             .map(Delivery::nextStatus)
             .flatMap(deliveryRepository::save);
@@ -68,7 +68,7 @@ public class DeliveryService {
     public Mono<Delivery> completeDelivery(final String deliveryId) {
         return deliveryRepository
             .findById(deliveryId)
-            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, COMPLETE)
+            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, PICKED_UP)
                 .map(Delivery::nextStatus)
                 .map(Delivery::setFinishTime)
                 .flatMap(deliveryRepository::save));
@@ -85,9 +85,6 @@ public class DeliveryService {
         return deliveryRepository.findAllBy(pageable);
     }
 
-    Long MAX_ATTEMPTS = 3L;
-    Duration FIXED_DELAY = Duration.ofMillis(500);
-
     private RetryBackoffSpec retryBackoffSpec() {
         return Retry.fixedDelay(MAX_ATTEMPTS, FIXED_DELAY)
             .filter(
@@ -97,12 +94,6 @@ public class DeliveryService {
     }
 
     private static class DeliveryValidator {
-
-        public static Mono<Delivery> statusIsNotNull(Delivery delivery) {
-            return Objects.isNull(delivery.getDeliveryStatus())
-                ? Mono.error(new IllegalStateException("주문상태가 null 입니다."))
-                : Mono.just(delivery);
-        }
 
         public static Mono<Delivery> statusIsExpected(Delivery delivery, DeliveryStatus expected) {
             return delivery.getDeliveryStatus().equals(expected)
