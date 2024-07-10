@@ -15,9 +15,11 @@ import static org.mockito.Mockito.when;
 import com.potatorider.deliveryinfoservice.domain.DeliverySteps;
 import com.potatorider.domain.Delivery;
 import com.potatorider.exception.DeliveryNotFountException;
+import com.potatorider.exception.RetryExhaustedException;
 import com.potatorider.publisher.DeliveryPublisher;
 import com.potatorider.repository.DeliveryRepository;
 import com.potatorider.service.DeliveryService;
+import java.util.concurrent.TimeoutException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -248,5 +250,28 @@ public class DeliveryServiceTests {
             verify(deliveryRepository, times(1)).findById(deliveryId);
             verify(deliveryRepository, times(0)).save(any());
         }
+    }
+
+    @Nested
+    class Retry_back_of_spec {
+
+        /*todo 재시도가 수행되지 않음을 발견
+
+        @Test
+        void retries_on_timeout_exception() {
+            // Arrange
+            final Delivery delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(REQUEST);
+
+            when(deliveryRepository.save(delivery)).thenReturn(Mono.just(delivery));
+            when(deliveryPublisher.sendAddDeliveryEvent(any(Delivery.class)))
+                .thenReturn(Mono.error(new TimeoutException()));
+            // Act
+            var result = deliveryService.saveDelivery(delivery);
+
+            // Assert
+            StepVerifier.create(result).expectError(RetryExhaustedException.class).verify();
+            verify(deliveryPublisher, times(1)).sendAddDeliveryEvent(any(Delivery.class));
+        }
+        */
     }
 }
