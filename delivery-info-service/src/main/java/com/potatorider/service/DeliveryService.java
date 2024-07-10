@@ -2,6 +2,7 @@ package com.potatorider.service;
 
 import static com.potatorider.domain.DeliveryStatus.ACCEPT;
 import static com.potatorider.domain.DeliveryStatus.COMPLETE;
+import static com.potatorider.domain.DeliveryStatus.PICKED_UP;
 import static com.potatorider.domain.DeliveryStatus.REQUEST;
 import static com.potatorider.domain.DeliveryStatus.RIDER_SET;
 
@@ -67,7 +68,7 @@ public class DeliveryService {
     public Mono<Delivery> completeDelivery(final String deliveryId) {
         return deliveryRepository
             .findById(deliveryId)
-            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, COMPLETE)
+            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery, PICKED_UP)
                 .map(Delivery::nextStatus)
                 .map(Delivery::setFinishTime)
                 .flatMap(deliveryRepository::save));
