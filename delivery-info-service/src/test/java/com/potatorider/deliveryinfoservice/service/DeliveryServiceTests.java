@@ -4,7 +4,6 @@ import static com.potatorider.domain.DeliveryStatus.ACCEPT;
 import static com.potatorider.domain.DeliveryStatus.PICKED_UP;
 import static com.potatorider.domain.DeliveryStatus.REQUEST;
 import static com.potatorider.domain.DeliveryStatus.RIDER_SET;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.isA;
