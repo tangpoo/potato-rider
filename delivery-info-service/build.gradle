@@ -64,14 +64,6 @@ test {
 
 jacoco {
     toolVersion = "0.8.11"
-    reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
-    jacocoTestReport {
-        reports {
-            xml.required = false
-            csv.required = false
-            html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
-        }
-    }
 }
 
 jacocoTestReport {
@@ -79,12 +71,20 @@ jacocoTestReport {
     sourceSets sourceSets.main
     executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
 
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, excludes: [
-                    "com/potatorider/Application.*"
-            ])
-        }))
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+
+        afterEvaluate {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it, excludes: [
+                        "com/potatorider/Application.*"
+                ])
+            }))
+        }
+
+        xml.destination file("${buildDir}/jacoco/index.xml")
+        html.destination file("${buildDir}/jacoco/index.html")
     }
 
     finalizedBy jacocoTestCoverageVerification
