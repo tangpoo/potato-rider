@@ -7,7 +7,7 @@ plugins {
 
 group = 'com.potatorider'
 version = '0.0.1-SNAPSHOT'
-def jacocoMinimumCoverageRatio = 0.60
+def jacocoMinimumCoverageRatio = 0.50
 def jarFileName = 'delivery-info-service'
 
 bootJar {

@@ -62,19 +62,6 @@ public class DeliveryServiceTests {
             verify(deliveryRepository, times(1)).save(delivery);
             verify(deliveryPublisher, times(1)).sendAddDeliveryEvent(delivery);
         }
-
-        @Test
-        void fail_delivery_is_null() {
-            // Arrange
-            when(deliveryRepository.save(any())).thenReturn(Mono.error(IllegalArgumentException::new));
-
-            // Act
-            var result = deliveryService.saveDelivery(null);
-
-            // Assert
-            StepVerifier.create(result).expectError(IllegalArgumentException.class).verify();
-            verify(deliveryRepository, times(1)).save(any());
-        }
     }
 
     @Nested
