@@ -14,13 +14,10 @@ import static org.mockito.Mockito.when;
 
 import com.potatorider.deliveryinfoservice.domain.DeliverySteps;
 import com.potatorider.domain.Delivery;
-import com.potatorider.exception.DeliveryNotFountException;
-import com.potatorider.exception.RetryExhaustedException;
+import com.potatorider.exception.DeliveryNotFoundException;
 import com.potatorider.publisher.DeliveryPublisher;
 import com.potatorider.repository.DeliveryRepository;
 import com.potatorider.service.DeliveryService;
-import java.util.concurrent.TimeoutException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -92,13 +89,14 @@ public class DeliveryServiceTests {
             // Arrange
             String deliveryId = "delivery-1234";
 
-            when(deliveryRepository.findById(anyString())).thenReturn(Mono.error(DeliveryNotFountException::new));
+            when(deliveryRepository.findById(anyString())).thenReturn(Mono.error(
+                DeliveryNotFoundException::new));
 
             // Act
             var result = deliveryService.acceptDelivery(deliveryId);
 
             // Assert
-            StepVerifier.create(result).expectError(DeliveryNotFountException.class).verify();
+            StepVerifier.create(result).expectError(DeliveryNotFoundException.class).verify();
             verify(deliveryRepository, times(0)).save(any());
             verify(deliveryPublisher, times(0)).sendSetRiderEvent(any());
         }
