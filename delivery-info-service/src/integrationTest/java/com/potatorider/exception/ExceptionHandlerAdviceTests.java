@@ -63,9 +63,6 @@ public class ExceptionHandlerAdviceTests {
     @Test
     void handleWebExchangeBindingError() {
         // Arrange
-        var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(
-            DeliveryStatus.REQUEST);
-
         // Act
         testClient
             .post()
