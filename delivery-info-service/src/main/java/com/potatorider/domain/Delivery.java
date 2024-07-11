@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import reactor.core.publisher.Mono;
 
 @Document
 @Getter
@@ -48,7 +47,7 @@ public class Delivery {
 
     private LocalDateTime finishTime;
 
-    public Delivery setDeliveryStatusRequest(){
+    public Delivery setDeliveryStatusRequest() {
         deliveryStatus = DeliveryStatus.REQUEST;
         return this;
     }

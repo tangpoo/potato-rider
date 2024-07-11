@@ -1,15 +1,13 @@
 package com.potatorider.controller;
 
-import static com.potatorider.domain.DeliveryStatus.*;
-import static org.assertj.core.api.Assertions.*;
+import static com.potatorider.domain.DeliveryStatus.ACCEPT;
+import static com.potatorider.domain.DeliveryStatus.REQUEST;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.potatorider.deliveryinfoservice.domain.DeliverySteps;
 import com.potatorider.domain.Delivery;
-import com.potatorider.domain.DeliveryStatus;
 import com.potatorider.publisher.DeliveryPublisher;
 import com.potatorider.repository.DeliveryRepository;
-import java.util.Objects;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +25,6 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
