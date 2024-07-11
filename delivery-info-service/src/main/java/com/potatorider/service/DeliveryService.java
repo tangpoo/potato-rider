@@ -1,14 +1,13 @@
 package com.potatorider.service;
 
 import static com.potatorider.domain.DeliveryStatus.ACCEPT;
-import static com.potatorider.domain.DeliveryStatus.COMPLETE;
 import static com.potatorider.domain.DeliveryStatus.PICKED_UP;
 import static com.potatorider.domain.DeliveryStatus.REQUEST;
 import static com.potatorider.domain.DeliveryStatus.RIDER_SET;
 
 import com.potatorider.domain.Delivery;
 import com.potatorider.domain.DeliveryStatus;
-import com.potatorider.exception.DeliveryNotFountException;
+import com.potatorider.exception.DeliveryNotFoundException;
 import com.potatorider.exception.RetryExhaustedException;
 import com.potatorider.publisher.DeliveryPublisher;
 import com.potatorider.repository.DeliveryRepository;
@@ -77,7 +76,7 @@ public class DeliveryService {
     public Mono<Delivery> findDelivery(final String deliveryId) {
         return deliveryRepository
             .findById(deliveryId)
-            .switchIfEmpty(Mono.error(DeliveryNotFountException::new));
+            .switchIfEmpty(Mono.error(DeliveryNotFoundException::new));
     }
 
     public Flux<Delivery> findAllDelivery(final int page, final int size) {

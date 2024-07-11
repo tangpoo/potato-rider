@@ -1,23 +1,30 @@
 package com.potatorider.exception;
 
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.support.WebExchangeBindException;
 
-@ControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class ExceptionHandlerAdvice {
 
-    @ExceptionHandler(value = {
-        IllegalStateException.class,
-        IllegalArgumentException.class,
-        DeliveryNotFountException.class
-    })
+    @ExceptionHandler(
+        value = {
+            IllegalArgumentException.class,
+            IllegalStateException.class,
+            DeliveryNotFoundException.class
+        })
     public ResponseEntity<String> handleBadRequests(Exception ex) {
         logException(ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        var error = ex.getMessage();
+        log.error("Error is : {}", error);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(value = {RetryExhaustedException.class})
@@ -30,6 +37,19 @@ public class ExceptionHandlerAdvice {
     public ResponseEntity<String> handleInternalServerError(Throwable ex) {
         logException(ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = {WebExchangeBindException.class})
+    public ResponseEntity<String> handleConstraintViolation(WebExchangeBindException ex) {
+        logException(ex);
+        var error =
+            ((WebExchangeBindException) ex)
+                .getBindingResult().getAllErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .sorted()
+                .collect(Collectors.joining("/"));
+        log.error("Error is : {}", error);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     private void logException(final Throwable ex) {
