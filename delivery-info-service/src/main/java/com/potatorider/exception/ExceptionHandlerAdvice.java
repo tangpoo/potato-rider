@@ -26,7 +26,13 @@ public class ExceptionHandlerAdvice {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
     }
 
-    private void logException(final Exception ex) {
+    @ExceptionHandler(value = {Throwable.class})
+    public ResponseEntity<String> handleInternalServerError(Throwable ex) {
+        logException(ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
+    private void logException(final Throwable ex) {
         log.error("{} caught by advice : {}", ex.getClass().getName(), ex.getMessage(), ex);
     }
 }
