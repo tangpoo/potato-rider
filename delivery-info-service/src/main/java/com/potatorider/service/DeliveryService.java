@@ -29,8 +29,8 @@ public class DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
     private final DeliveryPublisher deliveryPublisher;
-    Long MAX_ATTEMPTS = 3L;
-    Duration FIXED_DELAY = Duration.ofMillis(500);
+    private final static Long MAX_ATTEMPTS = 3L;
+    private final static Duration FIXED_DELAY = Duration.ofMillis(500);
 
     public Mono<Delivery> saveDelivery(final Delivery delivery) {
         return deliveryRepository.save(delivery.setDeliveryStatusRequest())
