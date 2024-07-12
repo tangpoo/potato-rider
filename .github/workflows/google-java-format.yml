@@ -13,20 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # 필요한 모든 히스토리를 가져오기 위해 fetch-depth를 0으로 설정합니다.
-      - name: Set up Git user
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-      - name: Get current branch
-        id: vars
-        run: echo "BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-      - name: Checkout the branch
-        run: git checkout ${{ env.BRANCH_NAME }}
       - uses: axel-op/googlejavaformat-action@v3
         with:
-          args: "--replace"
-          commit-message: "Format: Google Java Format"
-      - name: Push changes
-        run: git push origin ${{ env.BRANCH_NAME }}
+          args: "--replace --aosp"
+          commit-message: "Format : Google Java Format"
