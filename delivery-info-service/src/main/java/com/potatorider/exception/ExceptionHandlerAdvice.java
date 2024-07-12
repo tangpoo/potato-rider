@@ -13,45 +13,45 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 @Slf4j
 public class ExceptionHandlerAdvice {
 
-    @ExceptionHandler(
-        value = {
-            IllegalArgumentException.class,
-            IllegalStateException.class,
-            DeliveryNotFoundException.class
-        })
-    public ResponseEntity<String> handleBadRequests(Exception ex) {
-        logException(ex);
-        var error = ex.getMessage();
-        log.error("Error is : {}", error);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-    }
+  @ExceptionHandler(
+      value = {
+        IllegalArgumentException.class,
+        IllegalStateException.class,
+        DeliveryNotFoundException.class
+      })
+  public ResponseEntity<String> handleBadRequests(Exception ex) {
+    logException(ex);
+    var error = ex.getMessage();
+    log.error("Error is : {}", error);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+  }
 
-    @ExceptionHandler(value = {RetryExhaustedException.class})
-    public ResponseEntity<String> handleRetryException(RetryExhaustedException ex) {
-        logException(ex);
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
-    }
+  @ExceptionHandler(value = {RetryExhaustedException.class})
+  public ResponseEntity<String> handleRetryException(RetryExhaustedException ex) {
+    logException(ex);
+    return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ex.getMessage());
+  }
 
-    @ExceptionHandler(value = {Throwable.class})
-    public ResponseEntity<String> handleInternalServerError(Throwable ex) {
-        logException(ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
-    }
+  @ExceptionHandler(value = {Throwable.class})
+  public ResponseEntity<String> handleInternalServerError(Throwable ex) {
+    logException(ex);
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+  }
 
-    @ExceptionHandler(value = {WebExchangeBindException.class})
-    public ResponseEntity<String> handleConstraintViolation(WebExchangeBindException ex) {
-        logException(ex);
-        var error =
-            ((WebExchangeBindException) ex)
-                .getBindingResult().getAllErrors().stream()
+  @ExceptionHandler(value = {WebExchangeBindException.class})
+  public ResponseEntity<String> handleConstraintViolation(WebExchangeBindException ex) {
+    logException(ex);
+    var error =
+        ((WebExchangeBindException) ex)
+            .getBindingResult().getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .sorted()
                 .collect(Collectors.joining("/"));
-        log.error("Error is : {}", error);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-    }
+    log.error("Error is : {}", error);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+  }
 
-    private void logException(final Throwable ex) {
-        log.error("{} caught by advice : {}", ex.getClass().getName(), ex.getMessage(), ex);
-    }
+  private void logException(final Throwable ex) {
+    log.error("{} caught by advice : {}", ex.getClass().getName(), ex.getMessage(), ex);
+  }
 }
