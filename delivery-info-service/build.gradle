@@ -5,7 +5,7 @@ plugins {
     id 'jacoco'
 }
 
-group = 'com.potatorider'
+group = 'com.tangpoo'
 version = '0.0.1-SNAPSHOT'
 def jacocoMinimumCoverageRatio = 0.50
 def jarFileName = 'delivery-info-service'
