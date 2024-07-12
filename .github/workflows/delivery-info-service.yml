@@ -14,10 +14,6 @@ jobs:
   tests:
     runs-on: ubuntu-latest
 
-    strategy:
-      fail-fast: true
-      matrix:
-        TEST_COMMAND: [ '--info delivery-info-service:integrationTest', '--info bootJar', '--info :delivery-info-service:generateJacocoTestCoverage' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -35,13 +31,19 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Test with Gradle
-        run: ./gradlew ${{ matrix.TEST_COMMAND }}
+      - name: Run integration tests
+        run: ./gradlew --info delivery-info-service:integrationTest
+
+      - name: Build jar
+        run: ./gradlew --info bootJar
+
+      - name: Generate Jacoco Test Coverage
+        run: ./gradlew --info :delivery-info-service:generateJacocoTestCoverage
 
       - name: Comment test coverage on PR
         id: jacoco
         uses: madrapps/jacoco-report@v1.2
         with:
           title: 📝 테스트 커버리지 리포트
-          paths: ${{ github.workspace }}/delivery-info-service/build/jacoco/index.xml
+          paths: delivery-info-service/build/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
