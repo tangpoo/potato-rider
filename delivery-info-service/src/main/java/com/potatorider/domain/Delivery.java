@@ -14,56 +14,55 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class Delivery {
 
-    @Id
-    private String id;
+  @Id private String id;
 
-    @NotNull(message = "주문번호는 필수값입니다.")
-    private String orderId;
+  @NotNull(message = "주문번호는 필수값입니다.")
+  private String orderId;
 
-    private String riderId;
+  private String riderId;
 
-    private String agencyId;
+  private String agencyId;
 
-    @NotNull(message = "상점 아이디는 필수값입니다.")
-    private String shopId;
+  @NotNull(message = "상점 아이디는 필수값입니다.")
+  private String shopId;
 
-    @NotNull(message = "고객님의 아이디는 필수값입니다.")
-    private String customerId;
+  @NotNull(message = "고객님의 아이디는 필수값입니다.")
+  private String customerId;
 
-    @NotNull(message = "배달주소는 필수 입력값입니다.")
-    private String address;
+  @NotNull(message = "배달주소는 필수 입력값입니다.")
+  private String address;
 
-    @NotNull(message = "전화번호는 필수 입력값입니다.")
-    private String phoneNumber;
+  @NotNull(message = "전화번호는 필수 입력값입니다.")
+  private String phoneNumber;
 
-    private String comment;
+  private String comment;
 
-    private DeliveryStatus deliveryStatus;
+  private DeliveryStatus deliveryStatus;
 
-    @NotNull(message = "주문일시는 필수 입력값입니다.")
-    private LocalDateTime orderTime;
+  @NotNull(message = "주문일시는 필수 입력값입니다.")
+  private LocalDateTime orderTime;
 
-    private LocalDateTime pickupTime;
+  private LocalDateTime pickupTime;
 
-    private LocalDateTime finishTime;
+  private LocalDateTime finishTime;
 
-    public Delivery setDeliveryStatusRequest() {
-        deliveryStatus = DeliveryStatus.REQUEST;
-        return this;
-    }
+  public Delivery setDeliveryStatusRequest() {
+    deliveryStatus = DeliveryStatus.REQUEST;
+    return this;
+  }
 
-    public Delivery nextStatus() {
-        deliveryStatus = deliveryStatus.getNext();
-        return this;
-    }
+  public Delivery nextStatus() {
+    deliveryStatus = deliveryStatus.getNext();
+    return this;
+  }
 
-    public Delivery setPickupTime() {
-        pickupTime = LocalDateTime.now();
-        return this;
-    }
+  public Delivery setPickupTime() {
+    pickupTime = LocalDateTime.now();
+    return this;
+  }
 
-    public Delivery setFinishTime() {
-        finishTime = LocalDateTime.now();
-        return this;
-    }
+  public Delivery setFinishTime() {
+    finishTime = LocalDateTime.now();
+    return this;
+  }
 }
