@@ -31,11 +31,14 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Run integration tests
-        run: ./gradlew --info delivery-info-service:integrationTest
-
       - name: Build jar
         run: ./gradlew --info bootJar
+
+      - name: Run Unit test
+        run: ./gradlew --info delivery-info-service:test
+
+      - name: Run integration tests
+        run: ./gradlew --info delivery-info-service:integrationTest
 
       - name: Generate Jacoco Test Coverage
         run: ./gradlew --info :delivery-info-service:generateJacocoTestCoverage
@@ -45,5 +48,5 @@ jobs:
         uses: madrapps/jacoco-report@v1.2
         with:
           title: 📝 테스트 커버리지 리포트
-          paths: delivery-info-service/build/jacoco/test/jacocoTestReport.xml
+          paths: ${{ github.workspace }}/delivery-info-service/build/jacoco/index.xml
           token: ${{ secrets.GITHUB_TOKEN }}
