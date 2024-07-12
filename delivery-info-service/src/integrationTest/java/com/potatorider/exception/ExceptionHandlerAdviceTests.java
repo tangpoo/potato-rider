@@ -21,53 +21,49 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @AutoConfigureWebTestClient
 public class ExceptionHandlerAdviceTests {
 
-    @Autowired
-    WebTestClient testClient;
+  @Autowired WebTestClient testClient;
 
-    @MockBean
-    DeliveryService deliveryService;
+  @MockBean DeliveryService deliveryService;
 
-    final String DELIVERY_URL = "/api/v1/delivery";
+  final String DELIVERY_URL = "/api/v1/delivery";
 
-    static Stream<Arguments> exceptionClassList() {
-        return Stream.of(
-            Arguments.of(new IllegalArgumentException(), HttpStatus.BAD_REQUEST),
-            Arguments.of(new IllegalStateException(), HttpStatus.BAD_REQUEST),
-            Arguments.of(new DeliveryNotFoundException(), HttpStatus.BAD_REQUEST),
-            Arguments.of(new RuntimeException(), HttpStatus.INTERNAL_SERVER_ERROR)
-        );
-    }
+  static Stream<Arguments> exceptionClassList() {
+    return Stream.of(
+        Arguments.of(new IllegalArgumentException(), HttpStatus.BAD_REQUEST),
+        Arguments.of(new IllegalStateException(), HttpStatus.BAD_REQUEST),
+        Arguments.of(new DeliveryNotFoundException(), HttpStatus.BAD_REQUEST),
+        Arguments.of(new RuntimeException(), HttpStatus.INTERNAL_SERVER_ERROR));
+  }
 
-    @ParameterizedTest
-    @MethodSource("exceptionClassList")
-    void exceptionHandlingTest(Throwable throwable, HttpStatus httpStatus) {
-        // Arrange
-        String deliveryId = "id-1234";
+  @ParameterizedTest
+  @MethodSource("exceptionClassList")
+  void exceptionHandlingTest(Throwable throwable, HttpStatus httpStatus) {
+    // Arrange
+    String deliveryId = "id-1234";
 
-        when(deliveryService.findDelivery(deliveryId)).thenThrow(throwable);
+    when(deliveryService.findDelivery(deliveryId)).thenThrow(throwable);
 
-        // Act + Assert
-        testClient
-            .get()
-            .uri(DELIVERY_URL + "/{deliveryId}", deliveryId)
-            .exchange()
-            .expectStatus()
-            .isEqualTo(httpStatus);
-    }
+    // Act + Assert
+    testClient
+        .get()
+        .uri(DELIVERY_URL + "/{deliveryId}", deliveryId)
+        .exchange()
+        .expectStatus()
+        .isEqualTo(httpStatus);
+  }
 
-    @Test
-    void handleWebExchangeBindingError() {
-        // Arrange
-        // Act
-        testClient
-            .post()
-            .uri(DELIVERY_URL)
-            .bodyValue(new Delivery())
-            .exchange()
-            .expectStatus()
-            .isEqualTo(HttpStatus.BAD_REQUEST.value());
+  @Test
+  void handleWebExchangeBindingError() {
+    // Arrange
+    // Act
+    testClient
+        .post()
+        .uri(DELIVERY_URL)
+        .bodyValue(new Delivery())
+        .exchange()
+        .expectStatus()
+        .isEqualTo(HttpStatus.BAD_REQUEST.value());
 
-        // Assert
-    }
-
+    // Assert
+  }
 }

@@ -33,88 +33,84 @@ import reactor.test.StepVerifier;
 @ContextConfiguration
 public class DeliveryControllerTests {
 
-    @Autowired
-    WebTestClient testClient;
+  @Autowired WebTestClient testClient;
 
-    @Autowired
-    DeliveryRepository deliveryRepository;
+  @Autowired DeliveryRepository deliveryRepository;
 
-    @SpyBean
-    DeliveryPublisher deliveryPublisher;
+  @SpyBean DeliveryPublisher deliveryPublisher;
 
-    @Container
-    private final static RabbitMQContainer rabbitmqContainer =
-        new RabbitMQContainer("rabbitmq:latest");
+  @Container
+  private static final RabbitMQContainer rabbitmqContainer =
+      new RabbitMQContainer("rabbitmq:latest");
 
-    @Container
-    private final static MongoDBContainer mongoContainer =
-        new MongoDBContainer("mongodb/mongodb-community-server:latest");
+  @Container
+  private static final MongoDBContainer mongoContainer =
+      new MongoDBContainer("mongodb/mongodb-community-server:latest");
 
+  @BeforeAll
+  static void beforeAll() {
+    rabbitmqContainer.start();
+    mongoContainer.start();
+  }
 
-    @BeforeAll
-    static void beforeAll() {
-        rabbitmqContainer.start();
-        mongoContainer.start();
-    }
+  @DynamicPropertySource
+  static void configure(DynamicPropertyRegistry registry) {
+    registry.add("spring.rabbitmq.host", rabbitmqContainer::getHost);
+    registry.add("spring.rabbitmq.port", rabbitmqContainer::getAmqpPort);
+    registry.add("spring.data.mongodb.uri", mongoContainer::getReplicaSetUrl);
+  }
 
-    @DynamicPropertySource
-    static void configure(DynamicPropertyRegistry registry) {
-        registry.add("spring.rabbitmq.host", rabbitmqContainer::getHost);
-        registry.add("spring.rabbitmq.port", rabbitmqContainer::getAmqpPort);
-        registry.add("spring.data.mongodb.uri", mongoContainer::getReplicaSetUrl);
-    }
+  @BeforeEach
+  void setUp() {
+    var setUpDatabase = deliveryRepository.deleteAll();
+    StepVerifier.create(setUpDatabase).verifyComplete();
+  }
 
-    @BeforeEach
-    void setUp() {
-        var setUpDatabase = deliveryRepository.deleteAll();
-        StepVerifier.create(setUpDatabase).verifyComplete();
-    }
+  @DisplayName("신규배송저장")
+  @Test
+  void save_delivery() {
+    // Arrange
+    var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(null);
 
-    @DisplayName("신규배송저장")
-    @Test
-    void save_delivery() {
-        // Arrange
-        var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(null);
+    // Act
+    var result =
+        testClient
+            .post()
+            .uri("/api/v1/delivery")
+            .bodyValue(delivery)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectBody(Delivery.class)
+            .returnResult()
+            .getResponseBody();
 
-        // Act
-        var result =
-            testClient
-                .post()
-                .uri("/api/v1/delivery")
-                .bodyValue(delivery)
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBody(Delivery.class)
-                .returnResult()
-                .getResponseBody();
+    // Assert
+    assertThat(result.getOrderId()).isEqualTo(delivery.getOrderId());
+    assertThat(result.getDeliveryStatus()).isEqualTo(REQUEST);
+  }
 
-        // Assert
-        assertThat(result.getOrderId()).isEqualTo(delivery.getOrderId());
-        assertThat(result.getDeliveryStatus()).isEqualTo(REQUEST);
-    }
+  @DisplayName("배송승인")
+  @Test
+  void accept_delivery() {
+    // Arrange
+    var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(REQUEST);
+    var saveDelivery = deliveryRepository.save(delivery).block();
 
-    @DisplayName("배송승인")
-    @Test
-    void accept_delivery() {
-        // Arrange
-        var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(REQUEST);
-        var saveDelivery = deliveryRepository.save(delivery).block();
+    // Act
+    var result =
+        testClient
+            .put()
+            .uri("/api/v1/delivery/{deliveryId}/accept", saveDelivery.getId())
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectBody(Delivery.class)
+            .returnResult()
+            .getResponseBody();
 
-        // Act
-        var result =
-            testClient
-                .put()
-                .uri("/api/v1/delivery/{deliveryId}/accept", saveDelivery.getId())
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBody(Delivery.class)
-                .returnResult()
-                .getResponseBody();
-
-        // Assert
-        assertThat(result.getOrderId()).isEqualTo(delivery.getOrderId());
-        assertThat(result.getDeliveryStatus()).isEqualTo(ACCEPT);
-    }
+    // Assert
+    assertThat(result.getOrderId()).isEqualTo(delivery.getOrderId());
+    assertThat(result.getDeliveryStatus()).isEqualTo(ACCEPT);
+  }
 }
