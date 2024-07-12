@@ -8,6 +8,6 @@ import reactor.core.publisher.Mono;
 @Tag(name = "Delivery API")
 public interface DeliveryControllerSwaggerDoc {
 
-    @Operation(summary = "신규배달 저장")
-    Mono<Delivery> saveDelivery(Delivery delivery);
+  @Operation(summary = "신규배달 저장")
+  Mono<Delivery> saveDelivery(Delivery delivery);
 }
