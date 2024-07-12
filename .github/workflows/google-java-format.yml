@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Check Git Status
+        run: git status
+      - name: Display Current Directory
+        run: ls -al
       - uses: axel-op/googlejavaformat-action@v3
         with:
           args: "--replace"
