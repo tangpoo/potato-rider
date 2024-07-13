@@ -48,5 +48,4 @@ public class Delivery {
     private LocalDateTime pickupTime;
 
     private LocalDateTime finishTime;
-
 }
