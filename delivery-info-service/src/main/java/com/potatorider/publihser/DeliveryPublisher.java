@@ -1,4 +1,4 @@
-package com.potatorider.subscriber;
+package com.potatorider.publihser;
 
 import com.potatorider.domain.Delivery;
 
