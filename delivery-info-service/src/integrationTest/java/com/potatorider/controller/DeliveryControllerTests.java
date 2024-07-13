@@ -7,8 +7,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.potatorider.deliveryinfoservice.domain.DeliverySteps;
 import com.potatorider.domain.Delivery;
-import com.potatorider.publisher.DeliveryPublisher;
 import com.potatorider.repository.DeliveryRepository;
+import com.potatorider.subscriber.DeliveryPublisher;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
