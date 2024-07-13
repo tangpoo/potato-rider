@@ -17,7 +17,7 @@ import com.potatorider.domain.Delivery;
 import com.potatorider.exception.DeliveryNotFoundException;
 import com.potatorider.repository.DeliveryRepository;
 import com.potatorider.service.DeliveryService;
-import com.potatorider.subscriber.DeliveryPublisher;
+import com.potatorider.publihser.DeliveryPublisher;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
