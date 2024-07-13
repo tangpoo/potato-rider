@@ -1,5 +1,3 @@
 package com.potatorider.subscriber;
 
-public class DeliveryMessageSubscriber {
-
-}
+public class DeliveryMessageSubscriber {}

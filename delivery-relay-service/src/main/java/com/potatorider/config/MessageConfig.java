@@ -1,5 +1,3 @@
 package com.potatorider.config;
 
-public class MessageConfig {
-
-}
+public class MessageConfig {}

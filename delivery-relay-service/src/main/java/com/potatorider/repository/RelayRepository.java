@@ -1,5 +1,3 @@
 package com.potatorider.repository;
 
-public interface RelayRepository {
-
-}
+public interface RelayRepository {}

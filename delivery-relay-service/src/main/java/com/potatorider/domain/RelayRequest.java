@@ -1,5 +1,3 @@
 package com.potatorider.domain;
 
-public class RelayRequest {
-
-}
+public class RelayRequest {}

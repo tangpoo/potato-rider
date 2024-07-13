@@ -1,5 +1,3 @@
 package com.potatorider.domain;
 
-public enum DeliveryStatus {
-
-}
+public enum DeliveryStatus {}

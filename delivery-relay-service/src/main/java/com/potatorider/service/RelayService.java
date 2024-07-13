@@ -1,5 +1,3 @@
 package com.potatorider.service;
 
-public class RelayService {
-
-}
+public class RelayService {}
