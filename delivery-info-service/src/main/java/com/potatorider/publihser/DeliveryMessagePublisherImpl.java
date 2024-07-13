@@ -1,4 +1,4 @@
-package com.potatorider.subscriber;
+package com.potatorider.publihser;
 
 import com.potatorider.domain.Delivery;
 
@@ -46,7 +46,7 @@ public class DeliveryMessagePublisherImpl implements DeliveryPublisher {
     private Mono<Delivery> publishAddDeliveryEvent(Delivery delivery) {
         return Mono.fromCallable(
                 () -> {
-                    messageQueue.convertAndSend(shopExchange, delivery);
+                    messageQueue.convertAndSend(shopExchange, "addDelivery", delivery);
                     return delivery;
                 });
     }

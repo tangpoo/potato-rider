@@ -11,7 +11,7 @@ import static org.mockito.Mockito.verify;
 
 import com.potatorider.deliveryinfoservice.domain.DeliverySteps;
 import com.potatorider.domain.Delivery;
-import com.potatorider.subscriber.DeliveryMessagePublisherImpl;
+import com.potatorider.publihser.DeliveryMessagePublisherImpl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
