@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 import com.potatorider.deliveryinfoservice.domain.DeliverySteps;
 import com.potatorider.domain.Delivery;
 import com.potatorider.exception.DeliveryNotFoundException;
-import com.potatorider.publisher.DeliveryPublisher;
+import com.potatorider.subscriber.DeliveryPublisher;
 import com.potatorider.repository.DeliveryRepository;
 import com.potatorider.service.DeliveryService;
 

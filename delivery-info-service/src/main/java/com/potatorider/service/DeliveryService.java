@@ -9,7 +9,7 @@ import com.potatorider.domain.Delivery;
 import com.potatorider.domain.DeliveryStatus;
 import com.potatorider.exception.DeliveryNotFoundException;
 import com.potatorider.exception.RetryExhaustedException;
-import com.potatorider.publisher.DeliveryPublisher;
+import com.potatorider.subscriber.DeliveryPublisher;
 import com.potatorider.repository.DeliveryRepository;
 
 import lombok.RequiredArgsConstructor;
