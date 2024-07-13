@@ -46,7 +46,7 @@ public class DeliveryMessagePublisherImpl implements DeliveryPublisher {
     private Mono<Delivery> publishAddDeliveryEvent(Delivery delivery) {
         return Mono.fromCallable(
                 () -> {
-                    messageQueue.convertAndSend(shopExchange, delivery);
+                    messageQueue.convertAndSend(shopExchange, "addDelivery", delivery);
                     return delivery;
                 });
     }

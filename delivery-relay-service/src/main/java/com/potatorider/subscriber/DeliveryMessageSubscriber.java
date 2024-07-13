@@ -10,10 +10,10 @@ import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-@Service
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class DeliveryMessageSubscriber {
@@ -26,9 +26,11 @@ public class DeliveryMessageSubscriber {
     @RabbitListener(
         ackMode = "MANUAL",
         id = "addDeliveryMessageListener",
-        bindings = @QueueBinding(value = @Queue, exchange = @Exchange("messageQueue.exchange.shop")))
+        bindings = @QueueBinding(value = @Queue,
+            exchange = @Exchange("messageQueue.exchange.shop"),
+        key = "addDelivery"))
     public Mono<Void> processAddDeliveryMessage(Delivery delivery) {
-        log.info("Consuming addDelivery    =>    " + delivery);
+        log.info("Consuming addDelivery     ===>      " + delivery);
         return relayRepository
             .save(new RelayRequest(ReceiverType.SHOP, delivery.getShopId(), delivery))
             .then();

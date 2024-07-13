@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class RelayRequest {
 

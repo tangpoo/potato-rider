@@ -49,23 +49,4 @@ public class Delivery {
 
     private LocalDateTime finishTime;
 
-    public Delivery setDeliveryStatusRequest() {
-        deliveryStatus = DeliveryStatus.REQUEST;
-        return this;
-    }
-
-    public Delivery nextStatus() {
-        deliveryStatus = deliveryStatus.getNext();
-        return this;
-    }
-
-    public Delivery setPickupTime() {
-        pickupTime = LocalDateTime.now();
-        return this;
-    }
-
-    public Delivery setFinishTime() {
-        finishTime = LocalDateTime.now();
-        return this;
-    }
 }
