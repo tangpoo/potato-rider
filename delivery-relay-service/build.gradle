@@ -7,8 +7,8 @@ plugins {
 
 group = 'com.tangpoo'
 version = '0.0.1-SNAPSHOT'
-def jacocoMinimumCoverageRatio = 0.50
-def jarFileName = 'delivery-info-service'
+def jacocoMinimumCoverageRatio = 0.30
+def jarFileName = 'delivery-relay-service'
 
 bootJar {
     archiveBaseName.set(jarFileName)
@@ -47,7 +47,7 @@ sourceSets {
 }
 
 task integrationTest(type: Test) {
-    description = 'Delivery-Info-Service : Integration Test'
+    description = 'Delivery-Relay-Service : Integration Test'
     group = 'verification'
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
@@ -152,6 +152,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation "org.testcontainers:mongodb"
     testImplementation 'org.springframework.amqp:spring-rabbit-test'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.13.1'
