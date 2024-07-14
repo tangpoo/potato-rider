@@ -1,4 +1,4 @@
-package com.potatorider.deliveryrelayservice;
+package com.potatorider;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,7 +1,15 @@
 package com.potatorider.repository;
 
+import com.potatorider.domain.ReceiverType;
 import com.potatorider.domain.RelayRequest;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
-public interface RelayRepository extends ReactiveMongoRepository<RelayRequest, String> {}
+import reactor.core.publisher.Flux;
+
+public interface RelayRepository extends ReactiveMongoRepository<RelayRequest, String> {
+
+    Flux<RelayRequest> findAllByReceiverTypeContaining(
+            Pageable pageable, ReceiverType receiverType);
+}
