@@ -40,4 +40,19 @@ public class DeliveryMessageSubscriber {
                 .save(new RelayRequest(ReceiverType.SHOP, delivery.getShopId(), delivery))
                 .then();
     }
+
+    @RabbitListener(
+        ackMode = "MANUAL",
+        id = "setRiderMessageListener",
+        bindings =
+        @QueueBinding(
+            value = @Queue,
+            exchange = @Exchange("messageQueue.exchange.agency"),
+            key = "setRider"))
+    public Mono<Void> processSetRiderMessage(Delivery delivery) {
+        log.info("Consuming SetRider     ===>      " + delivery);
+        return relayRepository
+            .save(new RelayRequest(ReceiverType.AGENCY, delivery.getShopId(), delivery))
+            .then();
+    }
 }
