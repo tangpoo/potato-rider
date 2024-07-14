@@ -45,7 +45,7 @@ public class DeliveryMessagePublisherImplTests {
 
         // Assert
         StepVerifier.create(result).expectNext(delivery).verifyComplete();
-        verify(amqpTemplate, times(1)).convertAndSend(eq(shopExchange), any(Delivery.class));
+        verify(amqpTemplate, times(1)).convertAndSend(eq(shopExchange), any(String.class), any(Delivery.class));
     }
 
     @Test
@@ -58,6 +58,6 @@ public class DeliveryMessagePublisherImplTests {
 
         // Assert
         StepVerifier.create(result).expectNext(delivery).verifyComplete();
-        verify(amqpTemplate, times(1)).convertAndSend(eq(agencyExchange), any(Delivery.class));
+        verify(amqpTemplate, times(1)).convertAndSend(eq(agencyExchange), any(String.class), any(Delivery.class));
     }
 }
