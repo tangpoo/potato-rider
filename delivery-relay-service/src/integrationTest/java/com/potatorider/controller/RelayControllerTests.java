@@ -1,6 +1,6 @@
 package com.potatorider.controller;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.potatorider.domain.Delivery;
@@ -9,7 +9,6 @@ import com.potatorider.domain.RelayRequest;
 import com.potatorider.repository.RelayRepository;
 import java.util.ArrayList;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,6 @@ public class RelayControllerTests {
     }
 
     private List<RelayRequest> makeRequest() {
-
 
         List<RelayRequest> relayRequestList = new ArrayList<>();
 

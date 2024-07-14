@@ -28,7 +28,6 @@ public class RelayRepositoryTests {
 
     private List<RelayRequest> makeRequest() {
 
-
         List<RelayRequest> relayRequestList = new ArrayList<>();
 
         for (int i = 0; i < 3; i++) {
