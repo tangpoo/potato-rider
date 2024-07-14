@@ -32,12 +32,27 @@ public class DeliveryMessageSubscriber {
             bindings =
                     @QueueBinding(
                             value = @Queue,
-                            exchange = @Exchange("messageQueue.exchange.shop"),
+                            exchange = @Exchange(shopExchange),
                             key = "addDelivery"))
     public Mono<Void> processAddDeliveryMessage(Delivery delivery) {
         log.info("Consuming addDelivery     ===>      " + delivery);
         return relayRepository
                 .save(new RelayRequest(ReceiverType.SHOP, delivery.getShopId(), delivery))
+                .then();
+    }
+
+    @RabbitListener(
+            ackMode = "MANUAL",
+            id = "setRiderMessageListener",
+            bindings =
+                    @QueueBinding(
+                            value = @Queue,
+                            exchange = @Exchange(agencyExchange),
+                            key = "setRider"))
+    public Mono<Void> processSetRiderMessage(Delivery delivery) {
+        log.info("Consuming SetRider     ===>      " + delivery);
+        return relayRepository
+                .save(new RelayRequest(ReceiverType.AGENCY, delivery.getShopId(), delivery))
                 .then();
     }
 }
