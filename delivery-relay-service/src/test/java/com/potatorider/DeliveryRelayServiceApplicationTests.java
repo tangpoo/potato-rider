@@ -1,4 +1,4 @@
-package com.potatorider.deliveryrelayservice;
+package com.potatorider;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -7,5 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 class DeliveryRelayServiceApplicationTests {
 
     @Test
-    void contextLoads() {}
+    void contextLoads() {
+    }
 }

@@ -32,7 +32,7 @@ public class DeliveryMessageSubscriber {
             bindings =
                     @QueueBinding(
                             value = @Queue,
-                            exchange = @Exchange("messageQueue.exchange.shop"),
+                            exchange = @Exchange(shopExchange),
                             key = "addDelivery"))
     public Mono<Void> processAddDeliveryMessage(Delivery delivery) {
         log.info("Consuming addDelivery     ===>      " + delivery);
@@ -47,7 +47,7 @@ public class DeliveryMessageSubscriber {
         bindings =
         @QueueBinding(
             value = @Queue,
-            exchange = @Exchange("messageQueue.exchange.agency"),
+            exchange = @Exchange(agencyExchange),
             key = "setRider"))
     public Mono<Void> processSetRiderMessage(Delivery delivery) {
         log.info("Consuming SetRider     ===>      " + delivery);
