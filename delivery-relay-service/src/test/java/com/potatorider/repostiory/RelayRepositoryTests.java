@@ -6,20 +6,22 @@ import com.potatorider.domain.Delivery;
 import com.potatorider.domain.ReceiverType;
 import com.potatorider.domain.RelayRequest;
 import com.potatorider.repository.RelayRepository;
-import java.util.ArrayList;
-import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.domain.PageRequest;
+
 import reactor.test.StepVerifier;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @DataMongoTest
 public class RelayRepositoryTests {
 
-    @Autowired
-    RelayRepository relayRepository;
+    @Autowired RelayRepository relayRepository;
 
     @AfterEach
     void tearDown() {
@@ -31,10 +33,10 @@ public class RelayRepositoryTests {
         List<RelayRequest> relayRequestList = new ArrayList<>();
 
         for (int i = 0; i < 3; i++) {
-            RelayRequest relayRequest1 = new RelayRequest(ReceiverType.SHOP, "shop-" + i,
-                new Delivery());
-            RelayRequest relayRequest2 = new RelayRequest(ReceiverType.AGENCY, "agency-" + i,
-                new Delivery());
+            RelayRequest relayRequest1 =
+                    new RelayRequest(ReceiverType.SHOP, "shop-" + i, new Delivery());
+            RelayRequest relayRequest2 =
+                    new RelayRequest(ReceiverType.AGENCY, "agency-" + i, new Delivery());
             relayRequestList.add(relayRequest1);
             relayRequestList.add(relayRequest2);
         }
@@ -52,14 +54,14 @@ public class RelayRepositoryTests {
         final PageRequest pageRequest = PageRequest.of(0, 10);
 
         // Act
-        var result = relayRepository.findAllByReceiverTypeContaining(
-            pageRequest, ReceiverType.SHOP);
+        var result =
+                relayRepository.findAllByReceiverTypeContaining(pageRequest, ReceiverType.SHOP);
 
         // Assert
         StepVerifier.create(result)
-            .expectNextMatches(request -> request.getReceiverType() == ReceiverType.SHOP)
-            .expectNextMatches(request -> request.getReceiverType() == ReceiverType.SHOP)
-            .expectNextMatches(request -> request.getReceiverType() == ReceiverType.SHOP)
-            .verifyComplete();
+                .expectNextMatches(request -> request.getReceiverType() == ReceiverType.SHOP)
+                .expectNextMatches(request -> request.getReceiverType() == ReceiverType.SHOP)
+                .expectNextMatches(request -> request.getReceiverType() == ReceiverType.SHOP)
+                .verifyComplete();
     }
 }

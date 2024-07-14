@@ -2,6 +2,7 @@ package com.potatorider.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -10,8 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class RelayRequest {
 
-    @Id
-    private String id;
+    @Id private String id;
 
     private ReceiverType receiverType;
 
@@ -20,7 +20,7 @@ public class RelayRequest {
     private Delivery delivery;
 
     public RelayRequest(
-        final ReceiverType receiverType, final String receiverId, final Delivery delivery) {
+            final ReceiverType receiverType, final String receiverId, final Delivery delivery) {
         this.receiverType = receiverType;
         this.receiverId = receiverId;
         this.delivery = delivery;

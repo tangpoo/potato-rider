@@ -9,22 +9,22 @@ import com.potatorider.domain.Delivery;
 import com.potatorider.domain.RelayRequest;
 import com.potatorider.repository.RelayRepository;
 import com.potatorider.subscriber.DeliveryMessageSubscriber;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @ExtendWith(MockitoExtension.class)
 public class DeliveryMessageSubscriberTests {
 
-    @InjectMocks
-    private DeliveryMessageSubscriber deliveryMessageSubscriber;
+    @InjectMocks private DeliveryMessageSubscriber deliveryMessageSubscriber;
 
-    @Mock
-    private RelayRepository relayRepository;
+    @Mock private RelayRepository relayRepository;
 
     @Test
     public void add_delivery_message() {
