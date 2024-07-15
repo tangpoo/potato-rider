@@ -128,7 +128,7 @@ idea {
 }
 
 ext {
-	set('springCloudVersion', "2021.0.1")
+	set('springCloudVersion', "2023.0.0")
 }
 
 dependencyManagement {
@@ -140,11 +140,9 @@ dependencyManagement {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	implementation "org.springframework.cloud:spring-cloud-starter-sleuth"
-	implementation "org.springframework.cloud:spring-cloud-sleuth-zipkin"
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.springframework.boot:spring-boot-starter-amqp'
-	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+	implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
 
@@ -154,11 +152,10 @@ dependencies {
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.testcontainers:junit-jupiter'
-	testImplementation "org.testcontainers:mongodb"
-	testImplementation 'org.springframework.amqp:spring-rabbit-test'
+	testImplementation "org.testcontainers:testcontainers"
 	testImplementation 'io.projectreactor:reactor-test'
-	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.13.1'
-	testImplementation "org.testcontainers:rabbitmq"
+	testImplementation("org.springframework.cloud:spring-cloud-contract-wiremock")
+
 
 	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
