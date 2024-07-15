@@ -23,7 +23,7 @@ public class RiderLocationRepositoryImpl implements RiderLocationRepository{
     }
 
     @Override
-    public Mono<RiderLocation> getLocation(final String deliveryId) {
-        return locationOperations.opsForValue().get(deliveryId);
+    public Mono<RiderLocation> getLocation(final String locationId) {
+        return locationOperations.opsForValue().get(locationId);
     }
 }

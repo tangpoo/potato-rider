@@ -29,8 +29,8 @@ public class RiderLocationController {
         return riderLocationService.tryPutOperation(riderLocation);
     }
 
-    @GetMapping("/{deliveryId}")
-    public Mono<RiderLocation> getLocation(@PathVariable String deliveryId) {
-        return riderLocationService.getLocation(deliveryId);
+    @GetMapping("/{locationId}")
+    public Mono<RiderLocation> getLocation(@PathVariable String locationId) {
+        return riderLocationService.getLocation(locationId);
     }
 }

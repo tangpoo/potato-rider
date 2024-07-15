@@ -11,3 +11,7 @@ spring:
 wiremock:
   server:
     port: 8080
+
+services:
+  deliveryInfoService:
+    path: http://localhost:${wiremock.server.port}

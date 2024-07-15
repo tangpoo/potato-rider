@@ -109,7 +109,7 @@ public class DeliveryService {
         return deliveryRepository
                 .findById(deliveryId)
                 .flatMap(delivery -> Mono.just(delivery.getDeliveryStatus().equals(PICKED_UP)))
-                .onErrorReturn(NullPointerException.class, false);
+                .onErrorReturn(false);
     }
 
     private static class DeliveryValidator {
