@@ -105,6 +105,13 @@ public class DeliveryService {
                                 new RetryExhaustedException(retrySignal))));
     }
 
+    public Mono<Boolean> isPickedUp(final String deliveryId) {
+        return deliveryRepository
+                .findById(deliveryId)
+                .flatMap(delivery -> Mono.just(delivery.getDeliveryStatus().equals(PICKED_UP)))
+                .onErrorReturn(NullPointerException.class, false);
+    }
+
     private static class DeliveryValidator {
 
         public static Mono<Delivery> statusIsExpected(Delivery delivery, DeliveryStatus expected) {
