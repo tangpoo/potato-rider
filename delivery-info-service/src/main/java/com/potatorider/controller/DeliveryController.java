@@ -65,4 +65,9 @@ public class DeliveryController implements DeliveryControllerSwaggerDoc {
             @RequestParam(defaultValue = "1") int size) {
         return deliveryService.findAllDelivery(page, size);
     }
+
+    @GetMapping("/{deliveryId}/is-picked-up")
+    public Mono<Boolean> DeliveryIsPickedUp(@PathVariable String deliveryId) {
+        return deliveryService.isPickedUp(deliveryId);
+    }
 }
