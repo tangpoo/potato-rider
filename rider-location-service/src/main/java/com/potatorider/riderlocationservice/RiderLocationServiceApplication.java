@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class RiderLocationServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(RiderLocationServiceApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(RiderLocationServiceApplication.class, args);
+    }
 }
