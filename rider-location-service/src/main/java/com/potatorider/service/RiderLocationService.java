@@ -34,4 +34,8 @@ public class RiderLocationService {
         final RiderLocation riderLocation) {
         return isPickedUp ? riderLocationRepository.setIfAbsent(riderLocation) : Mono.just(false);
     }
+
+    public Mono<RiderLocation> getLocation(final String deliveryId) {
+        return riderLocationRepository.getLocation(deliveryId);
+    }
 }

@@ -21,4 +21,9 @@ public class RiderLocationRepositoryImpl implements RiderLocationRepository{
     public Mono<Boolean> setIfAbsent(final RiderLocation riderLocation) {
         return locationOperations.opsForValue().setIfAbsent(riderLocation.getId(), riderLocation);
     }
+
+    @Override
+    public Mono<RiderLocation> getLocation(final String deliveryId) {
+        return locationOperations.opsForValue().get(deliveryId);
+    }
 }

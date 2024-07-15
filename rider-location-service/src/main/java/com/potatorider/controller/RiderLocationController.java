@@ -3,6 +3,8 @@ package com.potatorider.controller;
 import com.potatorider.domain.RiderLocation;
 import com.potatorider.service.RiderLocationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,5 +27,10 @@ public class RiderLocationController {
     @PutMapping
     public Mono<Boolean> updateLocationPut(@RequestBody RiderLocation riderLocation) {
         return riderLocationService.tryPutOperation(riderLocation);
+    }
+
+    @GetMapping("/{deliveryId}")
+    public Mono<RiderLocation> getLocation(@PathVariable String deliveryId) {
+        return riderLocationService.getLocation(deliveryId);
     }
 }

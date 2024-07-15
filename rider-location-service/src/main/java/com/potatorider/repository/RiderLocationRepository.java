@@ -9,4 +9,6 @@ public interface RiderLocationRepository {
     Mono<Boolean> setIfPresent(RiderLocation riderLocation);
 
     Mono<Boolean> setIfAbsent(RiderLocation riderLocation);
+
+    Mono<RiderLocation> getLocation(String deliveryId);
 }
