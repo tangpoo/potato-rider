@@ -107,9 +107,9 @@ public class DeliveryService {
 
     public Mono<Boolean> isPickedUp(final String deliveryId) {
         return deliveryRepository
-            .findById(deliveryId)
-            .flatMap(delivery -> Mono.just(delivery.getDeliveryStatus().equals(PICKED_UP)))
-            .onErrorReturn(NullPointerException.class, false);
+                .findById(deliveryId)
+                .flatMap(delivery -> Mono.just(delivery.getDeliveryStatus().equals(PICKED_UP)))
+                .onErrorReturn(NullPointerException.class, false);
     }
 
     private static class DeliveryValidator {
