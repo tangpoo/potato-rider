@@ -8,26 +8,25 @@ import com.potatorider.domain.RiderLocation;
 import com.potatorider.domain.RiderLocationSteps;
 import com.potatorider.repository.DeliveryRepository;
 import com.potatorider.repository.RiderLocationRepository;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @ExtendWith(MockitoExtension.class)
 public class RiderLocationServiceTests {
 
-    @InjectMocks
-    private RiderLocationService riderLocationService;
+    @InjectMocks private RiderLocationService riderLocationService;
 
-    @Mock
-    private RiderLocationRepository riderLocationRepository;
+    @Mock private RiderLocationRepository riderLocationRepository;
 
-    @Mock
-    private DeliveryRepository deliveryRepository;
+    @Mock private DeliveryRepository deliveryRepository;
 
     @Nested
     class Try_put_operation {
@@ -54,8 +53,8 @@ public class RiderLocationServiceTests {
             final RiderLocation riderLocation = RiderLocationSteps.createRiderLocation();
 
             when(riderLocationRepository.setIfPresent(riderLocation)).thenReturn(Mono.just(false));
-            when(deliveryRepository.isPickedUp(riderLocation.getDeliveryId())).thenReturn(
-                Mono.just(false));
+            when(deliveryRepository.isPickedUp(riderLocation.getDeliveryId()))
+                    .thenReturn(Mono.just(false));
 
             // Act
             var result = riderLocationService.tryPutOperation(riderLocation);
@@ -73,8 +72,8 @@ public class RiderLocationServiceTests {
             final RiderLocation riderLocation = RiderLocationSteps.createRiderLocation();
 
             when(riderLocationRepository.setIfPresent(riderLocation)).thenReturn(Mono.just(false));
-            when(deliveryRepository.isPickedUp(riderLocation.getDeliveryId())).thenReturn(
-                Mono.just(true));
+            when(deliveryRepository.isPickedUp(riderLocation.getDeliveryId()))
+                    .thenReturn(Mono.just(true));
             when(riderLocationRepository.setIfAbsent(riderLocation)).thenReturn(Mono.just(true));
 
             // Act

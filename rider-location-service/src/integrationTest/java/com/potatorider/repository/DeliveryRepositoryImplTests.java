@@ -6,7 +6,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import java.util.stream.Stream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,14 +20,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+
 import reactor.test.StepVerifier;
+
+import java.util.stream.Stream;
 
 @AutoConfigureWireMock(port = 0)
 @ExtendWith(MockitoExtension.class)
 public class DeliveryRepositoryImplTests {
 
-    @InjectMocks
-    private DeliveryRepositoryImpl deliveryRepository;
+    @InjectMocks private DeliveryRepositoryImpl deliveryRepository;
 
     private WireMockServer wireMockServer;
 
@@ -52,14 +54,14 @@ public class DeliveryRepositoryImplTests {
 
         // Act
         wireMockServer.stubFor(
-            get(urlMatching("/api/v1/delivery/" + deliveryId + "/is-picked-up" ))
-                .willReturn(
-                    aResponse()
-                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .withBody(mapper.writeValueAsString(isPickedUp))
-                        .withStatus(HttpStatus.OK.value())
-                )
-        );
+                get(urlMatching("/api/v1/delivery/" + deliveryId + "/is-picked-up"))
+                        .willReturn(
+                                aResponse()
+                                        .withHeader(
+                                                HttpHeaders.CONTENT_TYPE,
+                                                MediaType.APPLICATION_JSON_VALUE)
+                                        .withBody(mapper.writeValueAsString(isPickedUp))
+                                        .withStatus(HttpStatus.OK.value())));
 
         var result = deliveryRepository.isPickedUp(deliveryId);
 

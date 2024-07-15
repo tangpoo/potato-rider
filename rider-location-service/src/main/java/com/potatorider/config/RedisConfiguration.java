@@ -1,6 +1,7 @@
 package com.potatorider.config;
 
 import com.potatorider.domain.RiderLocation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,20 +14,20 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfiguration {
 
-    @Autowired
-    ReactiveRedisConnectionFactory factory;
+    @Autowired ReactiveRedisConnectionFactory factory;
 
     @Bean
     public ReactiveRedisTemplate<String, RiderLocation> reactiveRedisTemplate(
-        ReactiveRedisConnectionFactory factory) {
+            ReactiveRedisConnectionFactory factory) {
 
         Jackson2JsonRedisSerializer<RiderLocation> serializer =
-            new Jackson2JsonRedisSerializer<>(RiderLocation.class);
+                new Jackson2JsonRedisSerializer<>(RiderLocation.class);
 
         RedisSerializationContext.RedisSerializationContextBuilder<String, RiderLocation> builder =
-            RedisSerializationContext.newSerializationContext(new StringRedisSerializer());
+                RedisSerializationContext.newSerializationContext(new StringRedisSerializer());
 
-        RedisSerializationContext<String, RiderLocation> context = builder.value(serializer).build();
+        RedisSerializationContext<String, RiderLocation> context =
+                builder.value(serializer).build();
         return new ReactiveRedisTemplate<>(factory, context);
     }
 }

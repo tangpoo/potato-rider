@@ -1,14 +1,17 @@
 package com.potatorider.repository;
 
 import com.potatorider.domain.RiderLocation;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.stereotype.Repository;
+
 import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
-public class RiderLocationRepositoryImpl implements RiderLocationRepository{
+public class RiderLocationRepositoryImpl implements RiderLocationRepository {
 
     private final ReactiveRedisTemplate<String, RiderLocation> locationOperations;
 

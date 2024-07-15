@@ -1,7 +1,7 @@
 package com.potatorider.repository;
 
-
 import com.potatorider.domain.RiderLocation;
+
 import reactor.core.publisher.Mono;
 
 public interface RiderLocationRepository {

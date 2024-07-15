@@ -2,10 +2,12 @@ package com.potatorider.service;
 
 import com.potatorider.domain.RiderLocation;
 import com.potatorider.repository.DeliveryRepository;
-import com.potatorider.repository.DeliveryRepositoryImpl;
 import com.potatorider.repository.RiderLocationRepository;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
+
 import reactor.core.publisher.Mono;
 
 @Service
@@ -16,8 +18,9 @@ public class RiderLocationService {
     private final DeliveryRepository deliveryRepository;
 
     public Mono<Boolean> tryPutOperation(final RiderLocation riderLocation) {
-        return riderLocationRepository.setIfPresent(riderLocation)
-            .flatMap(isSaved -> orElseSetNew(isSaved, riderLocation));
+        return riderLocationRepository
+                .setIfPresent(riderLocation)
+                .flatMap(isSaved -> orElseSetNew(isSaved, riderLocation));
     }
 
     private Mono<Boolean> orElseSetNew(final Boolean isSaved, final RiderLocation riderLocation) {
@@ -26,12 +29,12 @@ public class RiderLocationService {
 
     private Mono<Boolean> doSetNew(final RiderLocation riderLocation) {
         return deliveryRepository
-            .isPickedUp(riderLocation.getDeliveryId())
-            .flatMap(isPickedUp -> setIfPickedUp(isPickedUp, riderLocation));
+                .isPickedUp(riderLocation.getDeliveryId())
+                .flatMap(isPickedUp -> setIfPickedUp(isPickedUp, riderLocation));
     }
 
-    private Mono<Boolean> setIfPickedUp(final Boolean isPickedUp,
-        final RiderLocation riderLocation) {
+    private Mono<Boolean> setIfPickedUp(
+            final Boolean isPickedUp, final RiderLocation riderLocation) {
         return isPickedUp ? riderLocationRepository.setIfAbsent(riderLocation) : Mono.just(false);
     }
 
