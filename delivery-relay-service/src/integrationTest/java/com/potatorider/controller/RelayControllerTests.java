@@ -14,18 +14,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Testcontainers
 public class RelayControllerTests {
 
     @Autowired private WebTestClient testClient;
 
     @Autowired private RelayRepository relayRepository;
+
+    @Container
+    private static final MongoDBContainer mongoContainer =
+            new MongoDBContainer("mongodb/mongodb-community-server:latest");
+
+    @DynamicPropertySource
+    static void configure(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.uri", mongoContainer::getReplicaSetUrl);
+    }
 
     @AfterEach
     void tearDown() {
