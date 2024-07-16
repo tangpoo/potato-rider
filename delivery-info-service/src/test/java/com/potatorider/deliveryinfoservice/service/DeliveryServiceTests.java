@@ -89,7 +89,7 @@ public class DeliveryServiceTests {
             String deliveryId = "delivery-1234";
 
             when(deliveryRepository.findById(anyString()))
-                    .thenReturn(Mono.error(DeliveryNotFoundException::new));
+                    .thenReturn(Mono.empty());
 
             // Act
             var result = deliveryService.acceptDelivery(deliveryId);
