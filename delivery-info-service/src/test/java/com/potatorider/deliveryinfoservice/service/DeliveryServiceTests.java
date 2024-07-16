@@ -88,8 +88,7 @@ public class DeliveryServiceTests {
             // Arrange
             String deliveryId = "delivery-1234";
 
-            when(deliveryRepository.findById(anyString()))
-                    .thenReturn(Mono.empty());
+            when(deliveryRepository.findById(anyString())).thenReturn(Mono.empty());
 
             // Act
             var result = deliveryService.acceptDelivery(deliveryId);
