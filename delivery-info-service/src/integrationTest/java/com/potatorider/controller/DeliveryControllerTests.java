@@ -33,7 +33,6 @@ import reactor.test.StepVerifier;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 @Testcontainers
-@ContextConfiguration
 public class DeliveryControllerTests {
 
     @Autowired WebTestClient testClient;
