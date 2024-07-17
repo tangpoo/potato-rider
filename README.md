@@ -29,14 +29,11 @@
 ---
 ## 프로젝트 관련 업로드
 
-TimeLine
-[https://tangpoo.tistory.com/188]
+[TimeLine](https://tangpoo.tistory.com/188)
 
-주제 선정
-[https://tangpoo.tistory.com/185]
+[주제 선정](https://tangpoo.tistory.com/185)
 
-설계 과정
-[https://tangpoo.tistory.com/187]
+[설계 과정](https://tangpoo.tistory.com/187)
 
 성능 테스트(todo)
 
