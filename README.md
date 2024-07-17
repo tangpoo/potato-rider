@@ -21,7 +21,7 @@
 - 테스트 및 품질 : JaCoCo
 
 ## ERD
-![Pasted image 20240704144112](https://github.com/user-attachments/assets/85fda018-09fe-4261-96e0-af29e1cc262a)
+![Pasted image 20240704163024](https://github.com/user-attachments/assets/07b24cf6-89ca-41b5-84d6-fd05de272ded)
 
 ## Feature
 ![Pasted image 20240717185654](https://github.com/user-attachments/assets/12c29ebf-6f4c-4728-b76e-d8f437492e2c)
