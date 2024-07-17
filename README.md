@@ -21,7 +21,7 @@
 - 테스트 및 품질 : JaCoCo
 
 ## ERD
-![Pasted image 20240704144112](https://github.com/user-attachments/assets/85fda018-09fe-4261-96e0-af29e1cc262a)
+![Pasted image 20240704163024](https://github.com/user-attachments/assets/4a667a24-3fd2-4fad-a4b6-a354430a52ae)
 
 ## Feature
 ![Pasted image 20240717185654](https://github.com/user-attachments/assets/12c29ebf-6f4c-4728-b76e-d8f437492e2c)
@@ -29,14 +29,11 @@
 ---
 ## 프로젝트 관련 업로드
 
-TimeLine
-[https://tangpoo.tistory.com/188]
+[TimeLine](https://tangpoo.tistory.com/188)
 
-주제 선정
-[https://tangpoo.tistory.com/185]
+[주제 선정](https://tangpoo.tistory.com/185)
 
-설계 과정
-[https://tangpoo.tistory.com/187]
+[설계 과정](https://tangpoo.tistory.com/187)
 
 성능 테스트(todo)
 
