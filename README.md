@@ -3,7 +3,7 @@
 ## Architecture
 ![Pasted image 20240717184741](https://github.com/user-attachments/assets/b2ed5ddd-bfad-41ef-8de9-f1605d125243)
 
-## User Flow Snapshot
+## User Flow Diagram
 ![image](https://github.com/user-attachments/assets/93de8917-9f7d-43e7-90f4-c2a926ede7df)
 
 ## 주요 기술
@@ -23,7 +23,7 @@
 ## ERD
 ![Pasted image 20240704163024](https://github.com/user-attachments/assets/07b24cf6-89ca-41b5-84d6-fd05de272ded)
 
-## Feature
+## Sequence Diagram
 ![Pasted image 20240717185654](https://github.com/user-attachments/assets/12c29ebf-6f4c-4728-b76e-d8f437492e2c)
 
 ---
