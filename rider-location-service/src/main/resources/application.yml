@@ -15,3 +15,26 @@ wiremock:
 services:
   deliveryInfoService:
     path: http://localhost:${wiremock.server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1
+    propagation:
+      consume: B3
+      produce: B3
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+  level:
+    io.micrometer.tracing: DEBUG
+    brave: DEBUG
+    org.springframework.web: DEBUG
