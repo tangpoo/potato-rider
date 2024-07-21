@@ -10,7 +10,7 @@
 
 ## 주요 기술
 - 언어 : Java 17
-- 프레임워크 : Spring Boot, Spring Data JPA
+- 프레임워크 : Spring Boot, Spring WebFlux
 - 빌드 도구 : Gradle
 - API 문서화 : Swagger
 - 배포 및 운영 :
