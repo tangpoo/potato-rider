@@ -1,7 +1,8 @@
-## Potato-Rider는 주문서버-판매자-배달대행사를 잇는 배달 중계 서비스입니다.
+![image](https://github.com/user-attachments/assets/237ca827-d1cb-4f86-a76b-beda4ce07fbe)## Potato-Rider는 주문서버-판매자-배달대행사를 잇는 배달 중계 서비스입니다.
 
 ## Architecture
-![Pasted image 20240717184741](https://github.com/user-attachments/assets/b2ed5ddd-bfad-41ef-8de9-f1605d125243)
+![Pasted image 20240721145124](https://github.com/user-attachments/assets/9282470b-f7e6-43a5-b006-db0ed2903084)
+
 
 ## User Flow Diagram
 ![image](https://github.com/user-attachments/assets/93de8917-9f7d-43e7-90f4-c2a926ede7df)
@@ -14,7 +15,7 @@
 - 배포 및 운영 :
   - 서버 : AWS EC2, Docker
   - CI/CD : GitHub Actions
-  - 데이터베이스 : MongoDB (AWS RDS)
+  - 데이터베이스 : MongoDB
   - 캐시 : Redis (AWS Elastic Cache)
   - 메시징 시스템 : RabbitMQ
 - 모니터링 : Prometheus + Grafana, CloudWatch, Brave, Zipkin
@@ -35,13 +36,13 @@
 
 [설계 과정](https://tangpoo.tistory.com/187)
 
+[Jacoco와 Test Coverage](https://tangpoo.tistory.com/190)
+
+[Google Java Format 자동화 적용기](https://tangpoo.tistory.com/191)
+
+[Zipkin과 OpenTracing](https://tangpoo.tistory.com/192)
+
 성능 테스트(todo)
-
-Jacoco와 Test Coverage 이야기(todo)
-
-Google Java Format 자동화 적용기(todo)
-
-가치있는 테스트 식별하기(todo)
 
 
 
