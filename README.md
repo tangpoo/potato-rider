@@ -1,9 +1,8 @@
 ## Potato-Rider는 주문서버-판매자-배달대행사를 잇는 배달 중계 서비스입니다.
 
-![image](https://github.com/user-attachments/assets/237ca827-d1cb-4f86-a76b-beda4ce07fbe)
 
 ## Architecture
-![Pasted image 20240721145124](https://github.com/user-attachments/assets/9282470b-f7e6-43a5-b006-db0ed2903084)
+![image](https://github.com/user-attachments/assets/237ca827-d1cb-4f86-a76b-beda4ce07fbe)
 
 
 ## User Flow Diagram
