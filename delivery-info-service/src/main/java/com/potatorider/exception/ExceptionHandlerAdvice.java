@@ -44,7 +44,7 @@ public class ExceptionHandlerAdvice {
     public ResponseEntity<String> handleConstraintViolation(WebExchangeBindException ex) {
         logException(ex);
         var error =
-                ((WebExchangeBindException) ex)
+                ex
                         .getBindingResult().getAllErrors().stream()
                                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                                 .sorted()
