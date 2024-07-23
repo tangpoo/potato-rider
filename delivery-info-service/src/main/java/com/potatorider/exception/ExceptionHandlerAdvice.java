@@ -44,11 +44,10 @@ public class ExceptionHandlerAdvice {
     public ResponseEntity<String> handleConstraintViolation(WebExchangeBindException ex) {
         logException(ex);
         var error =
-                ex
-                        .getBindingResult().getAllErrors().stream()
-                                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                                .sorted()
-                                .collect(Collectors.joining("/"));
+                ex.getBindingResult().getAllErrors().stream()
+                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                        .sorted()
+                        .collect(Collectors.joining("/"));
         log.error("Error is : {}", error);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
