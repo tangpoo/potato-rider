@@ -50,3 +50,29 @@ jobs:
           title: 📝 테스트 커버리지 리포트
           paths: ${{ github.workspace }}/rider-location-service/build/jacoco/index.xml
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      # YML 파일 생성
+      - name: Make application.properties
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.LOCATION_YML }}" >> ./application.yml
+        shell: bash
+
+      - name: 도커 이미지 빌드
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/rider-location-service:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/rider-location-service:latest
+
+      - name: AWS 배포
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST_LOCATION }}
+          username: ubuntu
+          key: ${{ secrets.AWS_KEYPAIR_LOCATION }}
+          script: |
+            sudo docker rm -f $(docker ps -aq)
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/rider-location-service:latest
+            sudo docker run -it --rm -e JAVA_OPTS="-Xms1G -Xmx2G" -d --name potato -p 8080:8080 tangpoo/rider-location-service
+            sudo docker image prune -f
