@@ -50,3 +50,30 @@ jobs:
           title: 📝 테스트 커버리지 리포트
           paths: ${{ github.workspace }}/delivery-info-service/build/jacoco/index.xml
           token: ${{ secrets.GITHUB_TOKEN }}
+
+
+      # YML 파일 생성
+      - name: Make application.properties
+        run: |
+          cd ./src/main/resources
+          touch ./application-production.yml
+          echo "${{ secrets.INFO_YML }}" >> ./application-production.yml
+        shell: bash
+
+      - name: 도커 이미지 빌드
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/delivery-info-service:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/delivery-info-service:latest
+
+      - name: AWS 배포
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_HOST_INFO }}
+          username: ubuntu
+          key: ${{ secrets.AWS_KEYPAIR_INFO }}
+          script: |
+            sudo docker rm -f $(docker ps -aq)
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/delivery-info-service:latest
+            sudo docker run -it --rm -e JAVA_OPTS="-Xms1G -Xmx2G" -d --name potato -p 8080:8080 tangpoo/delivery-info-service
+            sudo docker image prune -f
