@@ -60,12 +60,6 @@ jobs:
 #          echo "${{ secrets.INFO_YML }}" >> ./application-production.yml
 #        shell: bash
 
-      - name: 디렉토리 구조 확인
-        run: |
-          ls -al
-          ls -al potato-rider
-          ls -al potato-rider/delivery-info-service
-
       - name: 도커 이미지 빌드
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
