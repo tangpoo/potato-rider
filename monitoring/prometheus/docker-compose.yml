@@ -8,8 +8,8 @@ services:
       - ./prometheus/volume:/prometheus
     ports:
       - 9090:9090
-#    command:
-#      - '--config.file=/etc/prometheus/prometheus.yml'
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
     restart: always
     user: "$UID:$GID"
 
