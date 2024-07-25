@@ -55,7 +55,10 @@ jobs:
       # YML 파일 생성
       - name: Make application.yml
         run: |
-          cd ./src/main/resources
+          ls -al
+          ls delivery-info-service
+          ls delivery-info-service/src/main
+          cd delivery-info-service/src/main/resources
           touch ./application.yml
           echo "${{ secrets.INFO_YML }}" >> ./application.yml
         shell: bash
