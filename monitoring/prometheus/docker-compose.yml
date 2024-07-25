@@ -5,7 +5,6 @@ services:
     container_name: prometheus
     volumes:
       - ./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./prometheus/volume:/prometheus
     ports:
       - 9090:9090
     command:
