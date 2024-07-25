@@ -52,13 +52,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
 
-#      # YML 파일 생성
-#      - name: Make application.properties
-#        run: |
-#          cd ./src/main/resources
-#          touch ./application-production.yml
-#          echo "${{ secrets.INFO_YML }}" >> ./application-production.yml
-#        shell: bash
+      # YML 파일 생성
+      - name: Make application.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-production.yml
+          echo "${{ secrets.INFO_YML }}" >> ./application.yml
+        shell: bash
 
       - name: 도커 이미지 빌드
         run: |
