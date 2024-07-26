@@ -3,12 +3,12 @@ server:
 
 spring:
   rabbitmq:
-    host: 52.78.38.171
+    host: localhost
     port: 5672
   data:
     mongodb:
       database: potatorider
-      uri: mongodb+srv://lhinav3:4QgrD8KgouoNCCJX@potatorider.ptbb3g8.mongodb.net/?retryWrites=true&w=majority&appName=potatorider
+      uri: mongodb://localhost:27017
   application:
     name: delivery-info-service
 
