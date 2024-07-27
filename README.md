@@ -2,7 +2,8 @@
 
 
 ## Architecture
-![image](https://github.com/user-attachments/assets/237ca827-d1cb-4f86-a76b-beda4ce07fbe)
+![Pasted image 20240721185605](https://github.com/user-attachments/assets/5b0e2377-60c3-4929-9060-c7ad34c79f2f)
+
 
 
 ## User Flow Diagram
