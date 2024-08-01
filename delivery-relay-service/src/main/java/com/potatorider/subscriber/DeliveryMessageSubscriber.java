@@ -5,6 +5,7 @@ import com.potatorider.domain.ReceiverType;
 import com.potatorider.domain.RelayRequest;
 import com.potatorider.repository.RelayRepository;
 
+import com.potatorider.service.RelayService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,6 +13,7 @@ import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import reactor.core.publisher.Mono;
@@ -21,10 +23,10 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class DeliveryMessageSubscriber {
 
+    private final RelayService relayService;
+
     private static final String shopExchange = "messageQueue.exchange.shop";
     private static final String agencyExchange = "messageQueue.exchange.agency";
-
-    private final RelayRepository relayRepository;
 
     @RabbitListener(
             ackMode = "MANUAL",
@@ -36,8 +38,8 @@ public class DeliveryMessageSubscriber {
                             key = "addDelivery"))
     public Mono<Void> processAddDeliveryMessage(Delivery delivery) {
         log.info("Consuming addDelivery     ===>      " + delivery);
-        return relayRepository
-                .save(new RelayRequest(ReceiverType.SHOP, delivery.getShopId(), delivery))
+        return relayService
+                .saveDelivery(delivery)
                 .then();
     }
 
@@ -51,8 +53,8 @@ public class DeliveryMessageSubscriber {
                             key = "setRider"))
     public Mono<Void> processSetRiderMessage(Delivery delivery) {
         log.info("Consuming SetRider     ===>      " + delivery);
-        return relayRepository
-                .save(new RelayRequest(ReceiverType.AGENCY, delivery.getShopId(), delivery))
-                .then();
+        return relayService
+            .saveDelivery(delivery)
+            .then();
     }
 }
