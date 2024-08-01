@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.potatorider.domain.Delivery;
 import com.potatorider.domain.RelayRequest;
 import com.potatorider.repository.RelayRepository;
+import com.potatorider.service.RelayService;
 import com.potatorider.subscriber.DeliveryMessageSubscriber;
 
 import org.junit.jupiter.api.Test;
@@ -24,21 +25,21 @@ public class DeliveryMessageSubscriberTests {
 
     @InjectMocks private DeliveryMessageSubscriber deliveryMessageSubscriber;
 
-    @Mock private RelayRepository relayRepository;
+    @Mock private RelayService relayService;
 
     @Test
     public void add_delivery_message() {
         // Arrange
         Delivery delivery = new Delivery();
 
-        when(relayRepository.save(any(RelayRequest.class))).thenReturn(Mono.empty());
+        when(relayService.saveDelivery(any(Delivery.class))).thenReturn(Mono.empty());
 
         // Act
         var result = deliveryMessageSubscriber.processAddDeliveryMessage(delivery);
 
         // Assert
         StepVerifier.create(result).expectNext().verifyComplete();
-        verify(relayRepository, times(1)).save(any(RelayRequest.class));
+        verify(relayService, times(1)).saveDelivery(any(Delivery.class));
     }
 
     @Test
@@ -46,13 +47,13 @@ public class DeliveryMessageSubscriberTests {
         // Arrange
         Delivery delivery = new Delivery();
 
-        when(relayRepository.save(any(RelayRequest.class))).thenReturn(Mono.empty());
+        when(relayService.saveDelivery(any(Delivery.class))).thenReturn(Mono.empty());
 
         // Act
         var result = deliveryMessageSubscriber.processSetRiderMessage(delivery);
 
         // Assert
         StepVerifier.create(result).expectNext().verifyComplete();
-        verify(relayRepository, times(1)).save(any(RelayRequest.class));
+        verify(relayService, times(1)).saveDelivery(any(Delivery.class));
     }
 }
