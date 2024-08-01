@@ -29,25 +29,20 @@ import reactor.test.StepVerifier;
 @AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class RelayControllerSseTests {
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private WebTestClient testClient;
-
-    @Autowired
-    private RelayService relayService;
-
-    @Autowired
-    private RelayRepository relayRepository;
-
     @Container
     private static final RabbitMQContainer rabbitmqContainer =
         new RabbitMQContainer("rabbitmq:latest");
-
     @Container
     private static final MongoDBContainer mongoContainer =
         new MongoDBContainer("mongodb/mongodb-community-server:latest");
+    @LocalServerPort
+    private int port;
+    @Autowired
+    private WebTestClient testClient;
+    @Autowired
+    private RelayService relayService;
+    @Autowired
+    private RelayRepository relayRepository;
 
     @DynamicPropertySource
     static void configure(DynamicPropertyRegistry registry) {
