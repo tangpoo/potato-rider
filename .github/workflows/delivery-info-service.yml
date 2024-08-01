@@ -60,20 +60,20 @@ jobs:
 #          echo "${{ secrets.INFO_YML }}" >> ./application.yml
 #        shell: bash
 
-      - name: 도커 이미지 빌드
-        run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/delivery-info-service:latest -f delivery-info-service/Dockerfile delivery-info-service
-          docker push ${{ secrets.DOCKER_USERNAME }}/delivery-info-service:latest
-
-      - name: AWS 배포
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.AWS_HOST_INFO }}
-          username: ubuntu
-          key: ${{ secrets.AWS_KEYPAIR_INFO }}
-          script: |
-            sudo docker rm -f $(docker ps -aq)
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/delivery-info-service:latest
-            sudo docker run -it --rm -e JAVA_OPTS="-Xms1G -Xmx2G" -d --name potato -p 8080:8080 tangpoo/delivery-info-service
-            sudo docker image prune -f
+#      - name: 도커 이미지 빌드
+#        run: |
+#          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+#          docker build -t ${{ secrets.DOCKER_USERNAME }}/delivery-info-service:latest -f delivery-info-service/Dockerfile delivery-info-service
+#          docker push ${{ secrets.DOCKER_USERNAME }}/delivery-info-service:latest
+#
+#      - name: AWS 배포
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.AWS_HOST_INFO }}
+#          username: ubuntu
+#          key: ${{ secrets.AWS_KEYPAIR_INFO }}
+#          script: |
+#            sudo docker rm -f $(docker ps -aq)
+#            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/delivery-info-service:latest
+#            sudo docker run -it --rm -e JAVA_OPTS="-Xms1G -Xmx2G" -d --name potato -p 8080:8080 tangpoo/delivery-info-service
+#            sudo docker image prune -f
