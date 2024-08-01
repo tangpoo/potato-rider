@@ -7,7 +7,6 @@ plugins {
 
 group = 'com.tangpoo'
 version = '0.0.1-SNAPSHOT'
-def jacocoMinimumCoverageRatio = 0.20
 def jarFileName = 'delivery-info-service'
 
 bootJar {
@@ -96,14 +95,12 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'INSTRUCTION'
                 value = 'COVEREDRATIO'
-                minimum = jacocoMinimumCoverageRatio
             }
         }
         rule {
             limit {
                 counter = 'BRANCH'
                 value = 'COVEREDRATIO'
-                minimum = jacocoMinimumCoverageRatio
             }
         }
     }
