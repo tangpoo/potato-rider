@@ -6,8 +6,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.potatorider.domain.Delivery;
-import com.potatorider.domain.RelayRequest;
-import com.potatorider.repository.RelayRepository;
 import com.potatorider.service.RelayService;
 import com.potatorider.subscriber.DeliveryMessageSubscriber;
 
