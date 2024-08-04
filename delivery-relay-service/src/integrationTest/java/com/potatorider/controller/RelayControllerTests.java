@@ -7,7 +7,8 @@ import com.potatorider.domain.Delivery;
 import com.potatorider.domain.ReceiverType;
 import com.potatorider.domain.RelayRequest;
 import com.potatorider.repository.RelayRepository;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,21 +22,20 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @Testcontainers
 public class RelayControllerTests {
 
-    @Autowired private WebTestClient testClient;
+    @Autowired
+    private WebTestClient testClient;
 
-    @Autowired private RelayRepository relayRepository;
+    @Autowired
+    private RelayRepository relayRepository;
 
     @Container
     private static final MongoDBContainer mongoContainer =
-            new MongoDBContainer("mongodb/mongodb-community-server:latest");
+        new MongoDBContainer("mongodb/mongodb-community-server:latest");
 
     @DynamicPropertySource
     static void configure(DynamicPropertyRegistry registry) {
@@ -53,9 +53,9 @@ public class RelayControllerTests {
 
         for (int i = 0; i < 3; i++) {
             RelayRequest relayRequest1 =
-                    new RelayRequest(ReceiverType.SHOP, "shop-" + i, new Delivery());
+                new RelayRequest(ReceiverType.SHOP, "shop-" + i, new Delivery());
             RelayRequest relayRequest2 =
-                    new RelayRequest(ReceiverType.AGENCY, "agency-" + i, new Delivery());
+                new RelayRequest(ReceiverType.AGENCY, "agency-" + i, new Delivery());
             relayRequestList.add(relayRequest1);
             relayRequestList.add(relayRequest2);
         }
@@ -73,15 +73,15 @@ public class RelayControllerTests {
 
         // Act
         var result =
-                testClient
-                        .get()
-                        .uri("/api/v1/relay/shop")
-                        .exchange()
-                        .expectStatus()
-                        .isOk()
-                        .expectBodyList(RelayRequest.class)
-                        .returnResult()
-                        .getResponseBody();
+            testClient
+                .get()
+                .uri("/api/v1/relay/shop")
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(RelayRequest.class)
+                .returnResult()
+                .getResponseBody();
 
         // Assert
         assertThat(result.size()).isEqualTo(3);
@@ -98,15 +98,15 @@ public class RelayControllerTests {
 
         // Act
         var result =
-                testClient
-                        .get()
-                        .uri("/api/v1/relay/agency")
-                        .exchange()
-                        .expectStatus()
-                        .isOk()
-                        .expectBodyList(RelayRequest.class)
-                        .returnResult()
-                        .getResponseBody();
+            testClient
+                .get()
+                .uri("/api/v1/relay/agency")
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(RelayRequest.class)
+                .returnResult()
+                .getResponseBody();
 
         // Assert
         assertThat(result.size()).isEqualTo(3);
