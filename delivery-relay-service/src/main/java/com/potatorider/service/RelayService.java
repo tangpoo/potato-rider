@@ -30,8 +30,8 @@ public class RelayService {
     private final Sinks.Many<RelayRequest> relayRequestSink =
             Sinks.many().multicast().onBackpressureBuffer();
 
-    public Mono<RelayRequest> saveDelivery(final Delivery delivery) {
-        RelayRequest relayRequest = new RelayRequest(SHOP, delivery.getShopId(), delivery);
+    public Mono<RelayRequest> saveDelivery(final Delivery delivery, ReceiverType receiverType) {
+        RelayRequest relayRequest = new RelayRequest(receiverType, delivery.getShopId(), delivery);
         return relayRepository.save(relayRequest).doOnNext(relayRequestSink::tryEmitNext);
     }
 

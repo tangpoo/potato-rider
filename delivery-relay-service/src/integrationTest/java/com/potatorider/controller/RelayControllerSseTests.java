@@ -2,6 +2,7 @@ package com.potatorider.controller;
 
 import com.potatorider.domain.Delivery;
 import com.potatorider.domain.DeliveryStatus;
+import com.potatorider.domain.ReceiverType;
 import com.potatorider.domain.RelayRequest;
 import com.potatorider.repository.RelayRepository;
 import com.potatorider.service.RelayService;
@@ -67,7 +68,7 @@ public class RelayControllerSseTests {
 
         final Delivery delivery = createDelivery();
 
-        relayService.saveDelivery(delivery).block();
+        relayService.saveDelivery(delivery, ReceiverType.SHOP).block();
 
         // Act
         Flux<ServerSentEvent<RelayRequest>> eventFlux =

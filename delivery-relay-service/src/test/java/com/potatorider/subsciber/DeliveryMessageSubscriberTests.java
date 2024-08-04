@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.potatorider.domain.Delivery;
+import com.potatorider.domain.ReceiverType;
 import com.potatorider.service.RelayService;
 import com.potatorider.subscriber.DeliveryMessageSubscriber;
 
@@ -30,14 +31,14 @@ public class DeliveryMessageSubscriberTests {
         // Arrange
         Delivery delivery = new Delivery();
 
-        when(relayService.saveDelivery(any(Delivery.class))).thenReturn(Mono.empty());
+        when(relayService.saveDelivery(any(Delivery.class), any(ReceiverType.class))).thenReturn(Mono.empty());
 
         // Act
         var result = deliveryMessageSubscriber.processAddDeliveryMessage(delivery);
 
         // Assert
         StepVerifier.create(result).expectNext().verifyComplete();
-        verify(relayService, times(1)).saveDelivery(any(Delivery.class));
+        verify(relayService, times(1)).saveDelivery(any(Delivery.class), any(ReceiverType.class));
     }
 
     @Test
@@ -45,13 +46,13 @@ public class DeliveryMessageSubscriberTests {
         // Arrange
         Delivery delivery = new Delivery();
 
-        when(relayService.saveDelivery(any(Delivery.class))).thenReturn(Mono.empty());
+        when(relayService.saveDelivery(any(Delivery.class), any(ReceiverType.class))).thenReturn(Mono.empty());
 
         // Act
         var result = deliveryMessageSubscriber.processSetRiderMessage(delivery);
 
         // Assert
         StepVerifier.create(result).expectNext().verifyComplete();
-        verify(relayService, times(1)).saveDelivery(any(Delivery.class));
+        verify(relayService, times(1)).saveDelivery(any(Delivery.class), any(ReceiverType.class));
     }
 }
