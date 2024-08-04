@@ -40,7 +40,8 @@ public class RelayController {
 
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<RelayRequest>> streamRelayRequests(
-            @RequestHeader(value = "Last-Event-ID", defaultValue = "") String lastEventId) {
-        return relayService.streamRelayRequests(lastEventId);
+            @RequestHeader(value = "Last-Event-ID", defaultValue = "") String lastEventId,
+            @RequestHeader(value = "Receiver-ID", required = false) String receiverId) {
+        return relayService.streamRelayRequests(lastEventId, receiverId);
     }
 }
