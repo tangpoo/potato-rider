@@ -6,7 +6,7 @@ import com.potatorider.domain.ReceiverType;
 import com.potatorider.domain.RelayRequest;
 import com.potatorider.repository.RelayRepository;
 import com.potatorider.service.RelayService;
-import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,8 +23,11 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.junit.jupiter.Container;
+
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
+
+import java.time.LocalDateTime;
 
 @AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -32,20 +35,16 @@ public class RelayControllerSseTests {
 
     @Container
     private static final RabbitMQContainer rabbitmqContainer =
-        new RabbitMQContainer("rabbitmq:latest");
+            new RabbitMQContainer("rabbitmq:latest");
 
     @Container
     private static final MongoDBContainer mongoContainer =
-        new MongoDBContainer("mongodb/mongodb-community-server:latest");
+            new MongoDBContainer("mongodb/mongodb-community-server:latest");
 
-    @LocalServerPort
-    private int port;
-    @Autowired
-    private WebTestClient testClient;
-    @Autowired
-    private RelayService relayService;
-    @Autowired
-    private RelayRepository relayRepository;
+    @LocalServerPort private int port;
+    @Autowired private WebTestClient testClient;
+    @Autowired private RelayService relayService;
+    @Autowired private RelayRepository relayRepository;
 
     @DynamicPropertySource
     static void configure(DynamicPropertyRegistry registry) {
@@ -75,31 +74,30 @@ public class RelayControllerSseTests {
 
         // Act
         Flux<ServerSentEvent<RelayRequest>> eventFlux =
-            testClient
-                .get()
-                .uri(url)
-                .header("Receiver-ID", receiverId)
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .returnResult(
-                    new ParameterizedTypeReference<ServerSentEvent<RelayRequest>>() {
-                    })
-                .getResponseBody();
+                testClient
+                        .get()
+                        .uri(url)
+                        .header("Receiver-ID", receiverId)
+                        .exchange()
+                        .expectStatus()
+                        .isOk()
+                        .returnResult(
+                                new ParameterizedTypeReference<ServerSentEvent<RelayRequest>>() {})
+                        .getResponseBody();
 
         // Assert
         StepVerifier.create(eventFlux)
-            .expectNextMatches(
-                event -> {
-                    RelayRequest relayRequest = event.data();
-                    return relayRequest != null
-                        && relayRequest
-                        .getDelivery()
-                        .getOrderId()
-                        .equals(delivery.getOrderId());
-                })
-            .thenCancel()
-            .verify();
+                .expectNextMatches(
+                        event -> {
+                            RelayRequest relayRequest = event.data();
+                            return relayRequest != null
+                                    && relayRequest
+                                            .getDelivery()
+                                            .getOrderId()
+                                            .equals(delivery.getOrderId());
+                        })
+                .thenCancel()
+                .verify();
     }
 
     private Delivery createDelivery() {
@@ -116,18 +114,18 @@ public class RelayControllerSseTests {
         LocalDateTime finishTime = LocalDateTime.now().plusMinutes(30);
 
         return new Delivery(
-            id,
-            orderId,
-            riderId,
-            agencyId,
-            shopId,
-            customerId,
-            address,
-            phoneNumber,
-            "",
-            DeliveryStatus.REQUEST,
-            orderTime,
-            pickupTime,
-            finishTime);
+                id,
+                orderId,
+                riderId,
+                agencyId,
+                shopId,
+                customerId,
+                address,
+                phoneNumber,
+                "",
+                DeliveryStatus.REQUEST,
+                orderTime,
+                pickupTime,
+                finishTime);
     }
 }

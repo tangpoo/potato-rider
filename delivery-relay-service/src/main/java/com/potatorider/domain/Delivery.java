@@ -1,12 +1,15 @@
 package com.potatorider.domain;
 
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
 
 @Document
 @Getter
@@ -14,8 +17,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class Delivery {
 
-    @Id
-    private String id;
+    @Id private String id;
 
     @NotNull(message = "주문번호는 필수값입니다.")
     private String orderId;

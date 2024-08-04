@@ -1,28 +1,27 @@
 package com.potatorider.service;
 
 import com.potatorider.repository.RelayRepository;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import net.bytebuddy.build.Plugin.Engine.Target.Sink;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.codec.ServerSentEvent;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
-import reactor.core.publisher.Sinks.Many;
 import reactor.test.StepVerifier;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @ExtendWith(MockitoExtension.class)
 public class RelayServiceTests {
 
-    @InjectMocks
-    private RelayService relayService;
+    @InjectMocks private RelayService relayService;
 
-    @Mock
-    private RelayRepository relayRepository;
+    @Mock private RelayRepository relayRepository;
 
     @Test
     void stream_alert() {
@@ -49,13 +48,14 @@ public class RelayServiceTests {
 
         // Assert
         StepVerifier.create(result)
-            .expectNextMatches(event -> {
-                if (event == null) {
-                    return false;
-                }
-                return relayRequestId.equals(event.data());
-            })
-            .thenCancel()
-            .verify();
+                .expectNextMatches(
+                        event -> {
+                            if (event == null) {
+                                return false;
+                            }
+                            return relayRequestId.equals(event.data());
+                        })
+                .thenCancel()
+                .verify();
     }
 }
