@@ -1,6 +1,9 @@
 package com.potatorider.subscriber;
 
+import static com.potatorider.domain.ReceiverType.*;
+
 import com.potatorider.domain.Delivery;
+import com.potatorider.domain.ReceiverType;
 import com.potatorider.service.RelayService;
 
 import lombok.RequiredArgsConstructor;
@@ -34,7 +37,7 @@ public class DeliveryMessageSubscriber {
                             key = "addDelivery"))
     public Mono<Void> processAddDeliveryMessage(Delivery delivery) {
         log.info("Consuming addDelivery     ===>      " + delivery);
-        return relayService.saveDelivery(delivery).then();
+        return relayService.saveDelivery(delivery, SHOP).then();
     }
 
     @RabbitListener(
@@ -47,6 +50,6 @@ public class DeliveryMessageSubscriber {
                             key = "setRider"))
     public Mono<Void> processSetRiderMessage(Delivery delivery) {
         log.info("Consuming SetRider     ===>      " + delivery);
-        return relayService.saveDelivery(delivery).then();
+        return relayService.saveDelivery(delivery, AGENCY).then();
     }
 }
