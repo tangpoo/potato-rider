@@ -65,6 +65,7 @@ public class RelayControllerSseTests {
     public void test_sse_end_point() {
         // Arrange
         String url = "http://localhost:" + port + "/api/v1/relay/stream";
+        String receiverId = "shop-1234";
 
         final Delivery delivery = createDelivery();
 
@@ -75,6 +76,7 @@ public class RelayControllerSseTests {
                 testClient
                         .get()
                         .uri(url)
+                        .header("Receiver-ID", receiverId)
                         .exchange()
                         .expectStatus()
                         .isOk()
