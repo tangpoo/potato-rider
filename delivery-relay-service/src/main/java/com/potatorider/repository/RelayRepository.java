@@ -12,4 +12,6 @@ public interface RelayRepository extends ReactiveMongoRepository<RelayRequest, S
 
     Flux<RelayRequest> findAllByReceiverTypeContaining(
             Pageable pageable, ReceiverType receiverType);
+
+    Flux<RelayRequest> findAllByIsAcceptedAndIsEnabled(boolean isAccepted, boolean enabled);
 }

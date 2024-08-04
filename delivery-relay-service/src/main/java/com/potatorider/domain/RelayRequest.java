@@ -19,10 +19,16 @@ public class RelayRequest {
 
     private Delivery delivery;
 
+    private boolean isAccepted;
+
+    private boolean isEnabled;
+
     public RelayRequest(
             final ReceiverType receiverType, final String receiverId, final Delivery delivery) {
         this.receiverType = receiverType;
         this.receiverId = receiverId;
         this.delivery = delivery;
+        this.isAccepted = false;
+        this.isEnabled = true;
     }
 }
