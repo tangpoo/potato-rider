@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+  <!-- Logstash appender 설정 -->
+  <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+    <destination>localhost:5000</destination>
+    <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+  </appender>
+
+  <!-- root 로거 설정 -->
+  <root level="INFO">
+    <appender-ref ref="LOGSTASH"/>
+  </root>
+
+  <!-- 특정 패키지나 클래스에 대한 로거 설정 (필요할 경우 추가) -->
+  <logger name="INFO_LOG" level="DEBUG" additivity="false">
+    <appender-ref ref="LOGSTASH"/>
+  </logger>
+
+</configuration>
