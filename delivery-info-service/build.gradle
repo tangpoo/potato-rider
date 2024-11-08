@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.5'
     id 'jacoco'
+    id "org.sonarqube" version "5.1.0.4882"
 }
 
 group = 'com.tangpoo'
@@ -114,6 +115,15 @@ task generateJacocoTestCoverage(type: JacocoReport) {
 
     tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
     tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "potato-rider-delivery-info"
+        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.login", "sqp_1c7e88061bbed260c484336da9f703df18aea15f"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/jacoco/index.xml"
+    }
 }
 
 apply plugin: 'idea'
