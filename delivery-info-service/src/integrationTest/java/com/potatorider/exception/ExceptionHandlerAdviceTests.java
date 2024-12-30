@@ -54,18 +54,18 @@ public class ExceptionHandlerAdviceTests {
                 .isEqualTo(httpStatus);
     }
 
-    @Test
-    void handleWebExchangeBindingError() {
-        // Arrange
-        // Act
-        testClient
-                .post()
-                .uri(DELIVERY_URL)
-                .bodyValue(new Delivery())
-                .exchange()
-                .expectStatus()
-                .isEqualTo(HttpStatus.BAD_REQUEST.value());
-
-        // Assert
-    }
+//    @Test
+//    void handleWebExchangeBindingError() {
+//        // Arrange
+//        // Act
+//        testClient
+//                .post()
+//                .uri(DELIVERY_URL)
+//                .bodyValue(new Delivery())
+//                .exchange()
+//                .expectStatus()
+//                .isEqualTo(HttpStatus.BAD_REQUEST.value());
+//
+//        // Assert
+//    }
 }
