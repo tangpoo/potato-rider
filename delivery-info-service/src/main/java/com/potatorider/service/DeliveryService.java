@@ -45,7 +45,7 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .switchIfEmpty(Mono.error(DeliveryNotFoundException::new))
-            .flatMap(delivery -> DeliveryValidatorKt.statusIsExpected(delivery,
+            .flatMap(delivery -> DeliveryValidatorKt.statusExpectIs(delivery,
                 REQUEST))
             .map(Delivery::nextStatus)
             .flatMap(deliveryRepository::save)
@@ -60,7 +60,7 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .switchIfEmpty(Mono.error(DeliveryNotFoundException::new))
-            .flatMap(delivery -> DeliveryValidatorKt.statusIsExpected(delivery,
+            .flatMap(delivery -> DeliveryValidatorKt.statusExpectIs(delivery,
                 ACCEPT))
             .map(Delivery::nextStatus)
             .flatMap(deliveryRepository::save);
@@ -70,7 +70,7 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .switchIfEmpty(Mono.error(DeliveryNotFoundException::new))
-            .flatMap(delivery -> DeliveryValidatorKt.statusIsExpected(delivery,
+            .flatMap(delivery -> DeliveryValidatorKt.statusExpectIs(delivery,
                 RIDER_SET))
             .map(Delivery::nextStatus)
             .map(Delivery::setPickupTime)
@@ -83,7 +83,7 @@ public class DeliveryService {
             .switchIfEmpty(Mono.error(DeliveryNotFoundException::new))
             .flatMap(
                 delivery ->
-                    DeliveryValidatorKt.statusIsExpected(delivery, PICKED_UP)
+                    DeliveryValidatorKt.statusExpectIs(delivery, PICKED_UP)
                         .map(Delivery::nextStatus)
                         .map(Delivery::setFinishTime)
                         .flatMap(deliveryRepository::save));
