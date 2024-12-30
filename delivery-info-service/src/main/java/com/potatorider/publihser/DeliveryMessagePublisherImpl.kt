@@ -17,6 +17,9 @@ class DeliveryMessagePublisherImpl(
     companion object {
         private const val SHOP_EXCHANGE = "messageQueue.exchange.shop"
         private const val AGENCY_EXCHANGE = "messageQueue.exchange.agency"
+
+        private const val ROUTING_KEY_SET_RIDER = "setRider"
+        private const val ROUTING_KEY_ADD_DELIVERY = "addDelivery"
     }
 
     override fun sendAddDeliveryEvent(delivery: Delivery): Mono<Delivery> {
@@ -33,14 +36,14 @@ class DeliveryMessagePublisherImpl(
 
     private fun publishSetRiderEvent(delivery: Delivery): Mono<Delivery> {
         return Mono.fromCallable {
-            messageQueue.convertAndSend(AGENCY_EXCHANGE, "setRider", delivery)
+            messageQueue.convertAndSend(AGENCY_EXCHANGE, ROUTING_KEY_SET_RIDER, delivery)
             delivery
         }
     }
 
     private fun publishAddDeliveryEvent(delivery: Delivery): Mono<Delivery> {
         return Mono.fromCallable {
-            messageQueue.convertAndSend(SHOP_EXCHANGE, "addDelivery", delivery)
+            messageQueue.convertAndSend(SHOP_EXCHANGE, ROUTING_KEY_ADD_DELIVERY, delivery)
             delivery
         }
     }
