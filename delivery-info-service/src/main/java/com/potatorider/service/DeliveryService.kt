@@ -1,120 +1,114 @@
-package com.potatorider.service;
+package com.potatorider.service
 
-import static com.potatorider.domain.DeliveryStatus.ACCEPT;
-import static com.potatorider.domain.DeliveryStatus.PICKED_UP;
-import static com.potatorider.domain.DeliveryStatus.REQUEST;
-import static com.potatorider.domain.DeliveryStatus.RIDER_SET;
-
-import com.potatorider.domain.Delivery;
-import com.potatorider.exception.DeliveryNotFoundException;
-import com.potatorider.exception.RetryExhaustedException;
-import com.potatorider.publihser.DeliveryPublisher;
-import com.potatorider.repository.DeliveryRepository;
-import com.potatorider.util.DeliveryValidatorKt;
-import java.time.Duration;
-import java.util.concurrent.TimeoutException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.util.retry.Retry;
-import reactor.util.retry.RetryBackoffSpec;
+import com.potatorider.domain.Delivery
+import com.potatorider.domain.DeliveryStatus
+import com.potatorider.exception.DeliveryNotFoundException
+import com.potatorider.exception.RetryExhaustedException
+import com.potatorider.publihser.DeliveryPublisher
+import com.potatorider.repository.DeliveryRepository
+import com.potatorider.util.statusExpectIs
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import reactor.util.retry.Retry
+import reactor.util.retry.Retry.RetrySignal
+import reactor.util.retry.RetryBackoffSpec
+import java.time.Duration
+import java.util.concurrent.TimeoutException
+import java.util.function.BiFunction
+import java.util.function.Supplier
 
 @Service
-@RequiredArgsConstructor
-public class DeliveryService {
+class DeliveryService(
+    private val deliveryRepository: DeliveryRepository,
+    private val deliveryPublisher: DeliveryPublisher
+) {
 
-    private static final Long MAX_ATTEMPTS = 3L;
-    private static final Duration FIXED_DELAY = Duration.ofMillis(500);
-    private final DeliveryRepository deliveryRepository;
-    private final DeliveryPublisher deliveryPublisher;
-
-    public Mono<Delivery> saveDelivery(final Delivery delivery) {
-        return deliveryRepository
-            .save(delivery.setDeliveryStatusRequest())
-            .flatMap(
-                del ->
-                    deliveryPublisher
-                        .sendAddDeliveryEvent(del)
-                        .retryWhen(retryBackoffSpec()));
+    companion object {
+        private const val MAX_ATTEMPTS = 3L
+        private val FIXED_DELAY: Duration = Duration.ofMillis(500)
     }
 
-    public Mono<Delivery> acceptDelivery(final String deliveryId) {
-        return deliveryRepository
-            .findById(deliveryId)
-            .switchIfEmpty(Mono.error(DeliveryNotFoundException::new))
-            .flatMap(delivery -> DeliveryValidatorKt.statusExpectIs(delivery,
-                REQUEST))
-            .map(Delivery::nextStatus)
-            .flatMap(deliveryRepository::save)
-            .flatMap(
-                del ->
-                    deliveryPublisher
-                        .sendSetRiderEvent(del)
-                        .retryWhen(retryBackoffSpec()));
-    }
+    fun saveDelivery(delivery: Delivery): Mono<Delivery> = deliveryRepository
+        .save(delivery.setDeliveryStatusRequest())
+        .flatMap { del ->
+            deliveryPublisher
+                .sendAddDeliveryEvent(del)
+                .retryWhen(retryBackoffSpec())
+        }
 
-    public Mono<Delivery> setDeliveryRider(final String deliveryId) {
-        return deliveryRepository
-            .findById(deliveryId)
-            .switchIfEmpty(Mono.error(DeliveryNotFoundException::new))
-            .flatMap(delivery -> DeliveryValidatorKt.statusExpectIs(delivery,
-                ACCEPT))
-            .map(Delivery::nextStatus)
-            .flatMap(deliveryRepository::save);
-    }
+    fun acceptDelivery(deliveryId: String): Mono<Delivery> = deliveryRepository
+        .findById(deliveryId)
+        .switchIfEmpty(Mono.error { DeliveryNotFoundException() })
+        .flatMap { delivery ->
+            delivery
+                .statusExpectIs(DeliveryStatus.REQUEST)
+        }
+        .map { delivery -> delivery.nextStatus() }
+        .flatMap { entity -> deliveryRepository.save(entity) }
+        .flatMap { del ->
+            deliveryPublisher
+                .sendSetRiderEvent(del)
+                .retryWhen(retryBackoffSpec())
+        }
 
-    public Mono<Delivery> pickUpDelivery(final String deliveryId) {
-        return deliveryRepository
-            .findById(deliveryId)
-            .switchIfEmpty(Mono.error(DeliveryNotFoundException::new))
-            .flatMap(delivery -> DeliveryValidatorKt.statusExpectIs(delivery,
-                RIDER_SET))
-            .map(Delivery::nextStatus)
-            .map(Delivery::setPickupTime)
-            .flatMap(deliveryRepository::save);
-    }
+    fun setDeliveryRider(deliveryId: String): Mono<Delivery> = deliveryRepository
+        .findById(deliveryId)
+        .switchIfEmpty(Mono.error { DeliveryNotFoundException() })
+        .flatMap { delivery ->
+            delivery
+                .statusExpectIs(DeliveryStatus.ACCEPT)
+        }
+        .map { delivery -> delivery.nextStatus() }
+        .flatMap { entity -> deliveryRepository.save(entity) }
 
-    public Mono<Delivery> completeDelivery(final String deliveryId) {
-        return deliveryRepository
-            .findById(deliveryId)
-            .switchIfEmpty(Mono.error(DeliveryNotFoundException::new))
-            .flatMap(
-                delivery ->
-                    DeliveryValidatorKt.statusExpectIs(delivery, PICKED_UP)
-                        .map(Delivery::nextStatus)
-                        .map(Delivery::setFinishTime)
-                        .flatMap(deliveryRepository::save));
-    }
+    fun pickUpDelivery(deliveryId: String): Mono<Delivery> = deliveryRepository
+        .findById(deliveryId)
+        .switchIfEmpty(Mono.error { DeliveryNotFoundException() })
+        .flatMap { delivery ->
+            delivery
+                .statusExpectIs(DeliveryStatus.RIDER_SET)
+        }
+        .map { delivery -> delivery.nextStatus() }
+        .map { delivery -> delivery.setPickupTime() }
+        .flatMap { entity -> deliveryRepository.save(entity) }
 
-    public Mono<Delivery> findDelivery(final String deliveryId) {
-        return deliveryRepository
-            .findById(deliveryId)
-            .switchIfEmpty(Mono.error(DeliveryNotFoundException::new));
-    }
+    fun completeDelivery(deliveryId: String): Mono<Delivery> = deliveryRepository
+        .findById(deliveryId)
+        .switchIfEmpty(Mono.error { DeliveryNotFoundException() })
+        .flatMap { delivery ->
+            delivery.statusExpectIs(DeliveryStatus.PICKED_UP)
+                .map { delivery.nextStatus() }
+                .map { delivery.setFinishTime() }
+                .flatMap { entity -> deliveryRepository.save(entity) }
+        }
 
-    public Flux<Delivery> findAllDelivery(final int page, final int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    fun findDelivery(deliveryId: String): Mono<Delivery> = deliveryRepository
+        .findById(deliveryId)
+        .switchIfEmpty(Mono.error { DeliveryNotFoundException() })
+
+    fun findAllDelivery(page: Int, size: Int): Flux<Delivery> {
+        val pageable: Pageable = PageRequest.of(page, size)
         return deliveryRepository
             .findAllBy(pageable)
-            .switchIfEmpty(Flux.error(DeliveryNotFoundException::new));
+            .switchIfEmpty(Flux.error { DeliveryNotFoundException() })
     }
 
-    private RetryBackoffSpec retryBackoffSpec() {
-        return Retry.fixedDelay(MAX_ATTEMPTS, FIXED_DELAY)
-            .filter((ex) -> ex instanceof TimeoutException)
-            .onRetryExhaustedThrow(
-                (((retryBackoffSpec, retrySignal) ->
-                    new RetryExhaustedException(retrySignal))));
-    }
+    private fun retryBackoffSpec(): RetryBackoffSpec = Retry.fixedDelay(MAX_ATTEMPTS, FIXED_DELAY)
+        .filter { ex: Throwable -> ex is TimeoutException }
+        .onRetryExhaustedThrow(
+            ((BiFunction { retryBackoffSpec: RetryBackoffSpec, retrySignal: RetrySignal ->
+                RetryExhaustedException(
+                    retrySignal
+                )
+            }))
+        )
 
-    public Mono<Boolean> isPickedUp(final String deliveryId) {
-        return deliveryRepository
-            .findById(deliveryId)
-            .switchIfEmpty(Mono.error(DeliveryNotFoundException::new))
-            .flatMap(delivery -> Mono.just(delivery.getDeliveryStatus().equals(PICKED_UP)))
-            .onErrorReturn(false);
-    }
+    fun isPickedUp(deliveryId: String): Mono<Boolean> = deliveryRepository
+        .findById(deliveryId)
+        .switchIfEmpty(Mono.error { DeliveryNotFoundException() })
+        .flatMap { delivery -> Mono.just(delivery.deliveryStatus == DeliveryStatus.PICKED_UP) }
+        .onErrorReturn(false)
 }
