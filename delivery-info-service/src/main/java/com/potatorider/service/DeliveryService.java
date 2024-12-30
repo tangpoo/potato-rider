@@ -10,7 +10,7 @@ import com.potatorider.exception.DeliveryNotFoundException;
 import com.potatorider.exception.RetryExhaustedException;
 import com.potatorider.publihser.DeliveryPublisher;
 import com.potatorider.repository.DeliveryRepository;
-import com.potatorider.util.DeliveryValidator;
+import com.potatorider.util.DeliveryValidatorKt;
 import java.time.Duration;
 import java.util.concurrent.TimeoutException;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +45,7 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .switchIfEmpty(Mono.error(DeliveryNotFoundException::new))
-            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery,
+            .flatMap(delivery -> DeliveryValidatorKt.statusIsExpected(delivery,
                 REQUEST))
             .map(Delivery::nextStatus)
             .flatMap(deliveryRepository::save)
@@ -60,7 +60,7 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .switchIfEmpty(Mono.error(DeliveryNotFoundException::new))
-            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery,
+            .flatMap(delivery -> DeliveryValidatorKt.statusIsExpected(delivery,
                 ACCEPT))
             .map(Delivery::nextStatus)
             .flatMap(deliveryRepository::save);
@@ -70,7 +70,7 @@ public class DeliveryService {
         return deliveryRepository
             .findById(deliveryId)
             .switchIfEmpty(Mono.error(DeliveryNotFoundException::new))
-            .flatMap(delivery -> DeliveryValidator.statusIsExpected(delivery,
+            .flatMap(delivery -> DeliveryValidatorKt.statusIsExpected(delivery,
                 RIDER_SET))
             .map(Delivery::nextStatus)
             .map(Delivery::setPickupTime)
@@ -83,7 +83,7 @@ public class DeliveryService {
             .switchIfEmpty(Mono.error(DeliveryNotFoundException::new))
             .flatMap(
                 delivery ->
-                    DeliveryValidator.statusIsExpected(delivery, PICKED_UP)
+                    DeliveryValidatorKt.statusIsExpected(delivery, PICKED_UP)
                         .map(Delivery::nextStatus)
                         .map(Delivery::setFinishTime)
                         .flatMap(deliveryRepository::save));
