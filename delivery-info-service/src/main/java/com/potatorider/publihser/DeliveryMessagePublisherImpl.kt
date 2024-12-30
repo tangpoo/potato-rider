@@ -34,17 +34,16 @@ class DeliveryMessagePublisherImpl(
             .flatMap(::publishSetRiderEvent)
     }
 
-    private fun publishSetRiderEvent(delivery: Delivery): Mono<Delivery> {
+    private fun publishEvent(exchange: String, routingKey: String, delivery: Delivery): Mono<Delivery> {
         return Mono.fromCallable {
-            messageQueue.convertAndSend(AGENCY_EXCHANGE, ROUTING_KEY_SET_RIDER, delivery)
+            messageQueue.convertAndSend(exchange, routingKey, delivery)
             delivery
         }
     }
 
-    private fun publishAddDeliveryEvent(delivery: Delivery): Mono<Delivery> {
-        return Mono.fromCallable {
-            messageQueue.convertAndSend(SHOP_EXCHANGE, ROUTING_KEY_ADD_DELIVERY, delivery)
-            delivery
-        }
-    }
+    private fun publishSetRiderEvent(delivery: Delivery): Mono<Delivery> =
+        publishEvent(AGENCY_EXCHANGE, ROUTING_KEY_SET_RIDER, delivery)
+
+    private fun publishAddDeliveryEvent(delivery: Delivery): Mono<Delivery> =
+        publishEvent(SHOP_EXCHANGE, ROUTING_KEY_ADD_DELIVERY, delivery)
 }
