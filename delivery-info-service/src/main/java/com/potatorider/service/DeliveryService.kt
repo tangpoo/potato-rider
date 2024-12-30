@@ -18,7 +18,6 @@ import reactor.util.retry.RetryBackoffSpec
 import java.time.Duration
 import java.util.concurrent.TimeoutException
 import java.util.function.BiFunction
-import java.util.function.Supplier
 
 @Service
 class DeliveryService(
@@ -40,12 +39,9 @@ class DeliveryService(
         }
 
     fun acceptDelivery(deliveryId: String): Mono<Delivery> = findDeliveryOrThrow(deliveryId)
-        .flatMap { delivery ->
-            delivery
-                .statusExpectIs(DeliveryStatus.REQUEST)
-        }
-        .map { delivery -> delivery.nextStatus() }
-        .flatMap { entity -> deliveryRepository.save(entity) }
+        .flatMap { it.statusExpectIs(DeliveryStatus.REQUEST) }
+        .map { it.nextStatus() }
+        .flatMap(deliveryRepository::save)
         .flatMap { del ->
             deliveryPublisher
                 .sendSetRiderEvent(del)
@@ -53,52 +49,42 @@ class DeliveryService(
         }
 
     fun setDeliveryRider(deliveryId: String): Mono<Delivery> = findDeliveryOrThrow(deliveryId)
-        .flatMap { delivery ->
-            delivery
-                .statusExpectIs(DeliveryStatus.ACCEPT)
-        }
-        .map { delivery -> delivery.nextStatus() }
-        .flatMap { entity -> deliveryRepository.save(entity) }
+        .flatMap { it.statusExpectIs(DeliveryStatus.ACCEPT) }
+        .map { it.nextStatus() }
+        .flatMap(deliveryRepository::save)
 
     fun pickUpDelivery(deliveryId: String): Mono<Delivery> = findDeliveryOrThrow(deliveryId)
-        .flatMap { delivery ->
-            delivery
-                .statusExpectIs(DeliveryStatus.RIDER_SET)
-        }
-        .map { delivery -> delivery.nextStatus() }
-        .map { delivery -> delivery.setPickupTime() }
-        .flatMap { entity -> deliveryRepository.save(entity) }
+        .flatMap { it.statusExpectIs(DeliveryStatus.RIDER_SET) }
+        .map { it.nextStatus() }
+        .map { it.setPickupTime() }
+        .flatMap(deliveryRepository::save)
 
     fun completeDelivery(deliveryId: String): Mono<Delivery> = findDeliveryOrThrow(deliveryId)
-        .flatMap { delivery ->
-            delivery.statusExpectIs(DeliveryStatus.PICKED_UP)
-                .map { delivery.nextStatus() }
-                .map { delivery.setFinishTime() }
-                .flatMap { entity -> deliveryRepository.save(entity) }
-        }
+        .flatMap { it.statusExpectIs(DeliveryStatus.PICKED_UP) }
+        .map { it.nextStatus() }
+        .map { it.setFinishTime() }
+        .flatMap(deliveryRepository::save)
 
     fun findDelivery(deliveryId: String): Mono<Delivery> = findDeliveryOrThrow(deliveryId)
 
-    fun findAllDelivery(page: Int, size: Int): Flux<Delivery> {
-        val pageable: Pageable = PageRequest.of(page, size)
-        return deliveryRepository
-            .findAllBy(pageable)
-            .switchIfEmpty(Flux.error { DeliveryNotFoundException() })
-    }
-
-    private fun retryBackoffSpec(): RetryBackoffSpec = Retry.fixedDelay(MAX_ATTEMPTS, FIXED_DELAY)
-        .filter { ex: Throwable -> ex is TimeoutException }
-        .onRetryExhaustedThrow(
-            ((BiFunction { retryBackoffSpec: RetryBackoffSpec, retrySignal: RetrySignal ->
-                RetryExhaustedException(
-                    retrySignal
-                )
-            }))
-        )
+    fun findAllDelivery(page: Int, size: Int): Flux<Delivery> =
+        PageRequest.of(page, size).let {
+            deliveryRepository
+                .findAllBy(it)
+                .switchIfEmpty(Flux.error { DeliveryNotFoundException() })
+        }
 
     fun isPickedUp(deliveryId: String): Mono<Boolean> = findDeliveryOrThrow(deliveryId)
         .flatMap { delivery -> Mono.just(delivery.deliveryStatus == DeliveryStatus.PICKED_UP) }
         .onErrorReturn(false)
+
+    private fun retryBackoffSpec(): RetryBackoffSpec =
+        Retry.fixedDelay(MAX_ATTEMPTS, FIXED_DELAY)
+        .filter { it is TimeoutException }
+        .onRetryExhaustedThrow { _, retrySignal ->
+                RetryExhaustedException(retrySignal)
+            }
+
 
     private fun findDeliveryOrThrow(deliveryId: String): Mono<Delivery> =
         deliveryRepository
