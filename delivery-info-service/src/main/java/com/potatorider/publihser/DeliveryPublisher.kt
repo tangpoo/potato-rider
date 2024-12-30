@@ -1,12 +1,10 @@
-package com.potatorider.publihser;
+package com.potatorider.publihser
 
-import com.potatorider.domain.Delivery;
+import com.potatorider.domain.Delivery
+import reactor.core.publisher.Mono
 
-import reactor.core.publisher.Mono;
+interface DeliveryPublisher {
+    fun sendAddDeliveryEvent(delivery: Delivery): Mono<Delivery>
 
-public interface DeliveryPublisher {
-
-    Mono<Delivery> sendAddDeliveryEvent(Delivery delivery);
-
-    Mono<Delivery> sendSetRiderEvent(Delivery delivery);
+    fun sendSetRiderEvent(delivery: Delivery): Mono<Delivery>
 }
