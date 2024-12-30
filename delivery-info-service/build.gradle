@@ -39,7 +39,7 @@ repositories {
 
 sourceSets {
     integrationTest {
-        java.srcDir "$projectDir/src/integrationTest/java"
+        java.srcDir "$projectDir/src/integrationTest/kotlin"
         resources.srcDir "$projectDir/src/integrationTest/resources"
         compileClasspath += main.output + test.output
         runtimeClasspath += main.output + test.output
@@ -145,6 +145,11 @@ dependencyManagement {
 }
 
 dependencies {
+    // SpringBoot + Kotlin 필수 의존성 - 문제 생길 때 가지 추가 보류
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
     implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
