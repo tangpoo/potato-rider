@@ -1,53 +1,45 @@
-package com.potatorider.publihser;
+package com.potatorider.publihser
 
-import com.potatorider.domain.Delivery;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.stereotype.Component;
-
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+import com.potatorider.domain.Delivery
+import lombok.RequiredArgsConstructor
+import lombok.extern.slf4j.Slf4j
+import org.springframework.amqp.core.AmqpTemplate
+import org.springframework.stereotype.Component
+import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
-public class DeliveryMessagePublisherImpl implements DeliveryPublisher {
+class DeliveryMessagePublisherImpl(
+    private val messageQueue: AmqpTemplate
+) : DeliveryPublisher {
 
-    private final AmqpTemplate messageQueue;
+    private val shopExchange = "messageQueue.exchange.shop"
+    private val agencyExchange = "messageQueue.exchange.agency"
 
-    private final String shopExchange = "messageQueue.exchange.shop";
-    private final String agencyExchange = "messageQueue.exchange.agency";
-
-    @Override
-    public Mono<Delivery> sendAddDeliveryEvent(final Delivery delivery) {
+    override fun sendAddDeliveryEvent(delivery: Delivery): Mono<Delivery> {
         return Mono.just(delivery)
-                .subscribeOn(Schedulers.boundedElastic())
-                .flatMap(this::publishAddDeliveryEvent);
+            .subscribeOn(Schedulers.boundedElastic())
+            .flatMap { delivery -> this.publishAddDeliveryEvent(delivery) }
     }
 
-    @Override
-    public Mono<Delivery> sendSetRiderEvent(final Delivery delivery) {
+    override fun sendSetRiderEvent(delivery: Delivery): Mono<Delivery> {
         return Mono.just(delivery)
-                .subscribeOn(Schedulers.boundedElastic())
-                .flatMap(this::publishSetRiderEvent);
+            .subscribeOn(Schedulers.boundedElastic())
+            .flatMap { delivery -> this.publishSetRiderEvent(delivery) }
     }
 
-    private Mono<Delivery> publishSetRiderEvent(Delivery delivery) {
-        return Mono.fromCallable(
-                () -> {
-                    messageQueue.convertAndSend(agencyExchange, "setRider", delivery);
-                    return delivery;
-                });
+    private fun publishSetRiderEvent(delivery: Delivery): Mono<Delivery> {
+        return Mono.fromCallable {
+            messageQueue.convertAndSend(agencyExchange, "setRider", delivery)
+            delivery
+        }
     }
 
-    private Mono<Delivery> publishAddDeliveryEvent(Delivery delivery) {
-        return Mono.fromCallable(
-                () -> {
-                    messageQueue.convertAndSend(shopExchange, "addDelivery", delivery);
-                    return delivery;
-                });
+    private fun publishAddDeliveryEvent(delivery: Delivery): Mono<Delivery> {
+        return Mono.fromCallable {
+            messageQueue.convertAndSend(shopExchange, "addDelivery", delivery)
+            delivery
+        }
     }
 }
