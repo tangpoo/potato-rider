@@ -39,9 +39,7 @@ class DeliveryService(
                 .retryWhen(retryBackoffSpec())
         }
 
-    fun acceptDelivery(deliveryId: String): Mono<Delivery> = deliveryRepository
-        .findById(deliveryId)
-        .switchIfEmpty(Mono.error { DeliveryNotFoundException() })
+    fun acceptDelivery(deliveryId: String): Mono<Delivery> = findDeliveryOrThrow(deliveryId)
         .flatMap { delivery ->
             delivery
                 .statusExpectIs(DeliveryStatus.REQUEST)
@@ -54,9 +52,7 @@ class DeliveryService(
                 .retryWhen(retryBackoffSpec())
         }
 
-    fun setDeliveryRider(deliveryId: String): Mono<Delivery> = deliveryRepository
-        .findById(deliveryId)
-        .switchIfEmpty(Mono.error { DeliveryNotFoundException() })
+    fun setDeliveryRider(deliveryId: String): Mono<Delivery> = findDeliveryOrThrow(deliveryId)
         .flatMap { delivery ->
             delivery
                 .statusExpectIs(DeliveryStatus.ACCEPT)
@@ -64,9 +60,7 @@ class DeliveryService(
         .map { delivery -> delivery.nextStatus() }
         .flatMap { entity -> deliveryRepository.save(entity) }
 
-    fun pickUpDelivery(deliveryId: String): Mono<Delivery> = deliveryRepository
-        .findById(deliveryId)
-        .switchIfEmpty(Mono.error { DeliveryNotFoundException() })
+    fun pickUpDelivery(deliveryId: String): Mono<Delivery> = findDeliveryOrThrow(deliveryId)
         .flatMap { delivery ->
             delivery
                 .statusExpectIs(DeliveryStatus.RIDER_SET)
@@ -75,9 +69,7 @@ class DeliveryService(
         .map { delivery -> delivery.setPickupTime() }
         .flatMap { entity -> deliveryRepository.save(entity) }
 
-    fun completeDelivery(deliveryId: String): Mono<Delivery> = deliveryRepository
-        .findById(deliveryId)
-        .switchIfEmpty(Mono.error { DeliveryNotFoundException() })
+    fun completeDelivery(deliveryId: String): Mono<Delivery> = findDeliveryOrThrow(deliveryId)
         .flatMap { delivery ->
             delivery.statusExpectIs(DeliveryStatus.PICKED_UP)
                 .map { delivery.nextStatus() }
@@ -85,9 +77,7 @@ class DeliveryService(
                 .flatMap { entity -> deliveryRepository.save(entity) }
         }
 
-    fun findDelivery(deliveryId: String): Mono<Delivery> = deliveryRepository
-        .findById(deliveryId)
-        .switchIfEmpty(Mono.error { DeliveryNotFoundException() })
+    fun findDelivery(deliveryId: String): Mono<Delivery> = findDeliveryOrThrow(deliveryId)
 
     fun findAllDelivery(page: Int, size: Int): Flux<Delivery> {
         val pageable: Pageable = PageRequest.of(page, size)
@@ -106,9 +96,12 @@ class DeliveryService(
             }))
         )
 
-    fun isPickedUp(deliveryId: String): Mono<Boolean> = deliveryRepository
-        .findById(deliveryId)
-        .switchIfEmpty(Mono.error { DeliveryNotFoundException() })
+    fun isPickedUp(deliveryId: String): Mono<Boolean> = findDeliveryOrThrow(deliveryId)
         .flatMap { delivery -> Mono.just(delivery.deliveryStatus == DeliveryStatus.PICKED_UP) }
         .onErrorReturn(false)
+
+    private fun findDeliveryOrThrow(deliveryId: String): Mono<Delivery> =
+        deliveryRepository
+            .findById(deliveryId)
+            .switchIfEmpty(Mono.error { DeliveryNotFoundException() })
 }
