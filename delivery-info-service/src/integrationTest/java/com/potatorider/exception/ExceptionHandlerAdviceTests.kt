@@ -19,14 +19,13 @@ import java.util.stream.Stream
 
 @WebFluxTest(DeliveryController::class)
 @AutoConfigureWebTestClient
-class ExceptionHandlerAdviceTests{
-
-    @Autowired
-    lateinit var testClient: WebTestClient
+class ExceptionHandlerAdviceTests @Autowired constructor(
+    private var testClient: WebTestClient,
     @MockBean
-    lateinit var deliveryService: DeliveryService
+    private var deliveryService: DeliveryService
+) {
 
-    val DELIVERY_URL: String = "/api/v1/delivery"
+    private val DELIVERY_URL: String = "/api/v1/delivery"
 
     @ParameterizedTest
     @MethodSource("exceptionClassList")
