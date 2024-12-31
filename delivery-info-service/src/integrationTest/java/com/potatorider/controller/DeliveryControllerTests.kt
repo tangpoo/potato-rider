@@ -27,16 +27,11 @@ import reactor.test.StepVerifier
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 @Testcontainers
-class DeliveryControllerTests {
-    @Autowired
-    lateinit var testClient: WebTestClient
-
-    @Autowired
-    lateinit var deliveryRepository: DeliveryRepository
-
-    @SpyBean
-    lateinit var deliveryPublisher: DeliveryPublisher
-
+class DeliveryControllerTests @Autowired constructor(
+    private var testClient: WebTestClient,
+    private var deliveryRepository: DeliveryRepository,
+    @SpyBean var deliveryPublisher: DeliveryPublisher
+) {
     @BeforeEach
     fun setUp() {
         val setUpDatabase = deliveryRepository.deleteAll()
@@ -51,16 +46,8 @@ class DeliveryControllerTests {
 
         // Act
         val result =
-            testClient
-                .post()
-                .uri("/api/v1/delivery")
-                .bodyValue(delivery)
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBody(Delivery::class.java)
-                .returnResult()
-                .responseBody
+            testClient.post().uri("/api/v1/delivery").bodyValue(delivery).exchange().expectStatus()
+                .isOk().expectBody(Delivery::class.java).returnResult().responseBody
 
         // Assert
         Assertions.assertThat(result.orderId).isEqualTo(delivery.orderId)
@@ -76,15 +63,8 @@ class DeliveryControllerTests {
 
         // Act
         val result =
-            testClient
-                .put()
-                .uri("/api/v1/delivery/{deliveryId}/accept", saveDelivery.id)
-                .exchange()
-                .expectStatus()
-                .isOk()
-                .expectBody(Delivery::class.java)
-                .returnResult()
-                .responseBody
+            testClient.put().uri("/api/v1/delivery/{deliveryId}/accept", saveDelivery.id).exchange()
+                .expectStatus().isOk().expectBody(Delivery::class.java).returnResult().responseBody
 
         // Assert
         Assertions.assertThat(result.orderId).isEqualTo(delivery.orderId)
