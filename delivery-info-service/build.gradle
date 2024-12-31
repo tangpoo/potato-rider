@@ -145,10 +145,9 @@ dependencyManagement {
 }
 
 dependencies {
-    // SpringBoot + Kotlin 필수 의존성 - 문제 생길 때 가지 추가 보류
+    // SpringBoot + Kotlin 필수 의존성
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
     implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
