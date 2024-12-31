@@ -1,5 +1,6 @@
 package com.potatorider.domain
 
+import jakarta.validation.constraints.NotBlank
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.LocalDateTime
@@ -7,13 +8,13 @@ import java.time.LocalDateTime
 @Document
 data class Delivery(
     @Id val id: String? = null,
-    val orderId: String,
+    @field:NotBlank val orderId: String,
     val riderId: String? = null,
     val agencyId: String? = null,
-    val shopId: String,
-    val customerId: String,
-    val address: String,
-    val phoneNumber: String,
+    @field:NotBlank val shopId: String,
+    @field:NotBlank val customerId: String,
+    @field:NotBlank val address: String,
+    @field:NotBlank val phoneNumber: String,
     val comment: String? = null,
     var deliveryStatus: DeliveryStatus? = null,
     val orderTime: LocalDateTime,
