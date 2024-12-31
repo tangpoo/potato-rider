@@ -33,5 +33,5 @@ public interface DeliveryControllerSwaggerDoc {
     Flux<Delivery> findAllDelivery(int page, int size);
 
     @Operation(summary = "배송 픽업 확인")
-    Mono<Boolean> DeliveryIsPickedUp(String deliveryId);
+    Mono<Boolean> isPickedUp(String deliveryId);
 }
