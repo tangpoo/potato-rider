@@ -1,83 +1,78 @@
-package com.potatorider.repostiory;
+package com.potatorider.repostiory
 
-import static com.potatorider.DeliveryStepsKt.createInvalidDelivery;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import com.potatorider.domain.Delivery;
-import com.potatorider.domain.ReceiverType;
-import com.potatorider.domain.RelayRequest;
-import com.potatorider.repository.RelayRepository;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
-import reactor.test.StepVerifier;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.potatorider.createInvalidDelivery
+import com.potatorider.domain.ReceiverType
+import com.potatorider.domain.RelayRequest
+import com.potatorider.repository.RelayRepository
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
+import org.springframework.data.domain.PageRequest
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.MongoDBContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
+import reactor.test.StepVerifier
 
 @DataMongoTest
 @Testcontainers
-public class RelayRepositoryTests {
-
-    @Autowired RelayRepository relayRepository;
-
-    @Container
-    private static final MongoDBContainer mongoContainer =
-            new MongoDBContainer("mongodb/mongodb-community-server:latest");
-
-    @DynamicPropertySource
-    static void configure(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.mongodb.uri", mongoContainer::getReplicaSetUrl);
-    }
+class RelayRepositoryTests {
+    @Autowired
+    lateinit var relayRepository: RelayRepository
 
     @AfterEach
-    void tearDown() {
-        relayRepository.deleteAll().block();
+    fun tearDown() {
+        relayRepository.deleteAll().block()
     }
 
-    private List<RelayRequest> makeRequest() {
+    private fun makeRequest(): List<RelayRequest> {
+        val relayRequestList: MutableList<RelayRequest> = ArrayList()
 
-        List<RelayRequest> relayRequestList = new ArrayList<>();
-
-        for (int i = 0; i < 3; i++) {
-            RelayRequest relayRequest1 =
-                    new RelayRequest(ReceiverType.SHOP, "shop-" + i, createInvalidDelivery());
-            RelayRequest relayRequest2 =
-                    new RelayRequest(ReceiverType.AGENCY, "agency-" + i, createInvalidDelivery());
-            relayRequestList.add(relayRequest1);
-            relayRequestList.add(relayRequest2);
+        for (i in 0..2) {
+            val relayRequest1 =
+                RelayRequest(ReceiverType.SHOP, "shop-$i", createInvalidDelivery())
+            val relayRequest2 =
+                RelayRequest(ReceiverType.AGENCY, "agency-$i", createInvalidDelivery())
+            relayRequestList.add(relayRequest1)
+            relayRequestList.add(relayRequest2)
         }
 
-        assertEquals(relayRequestList.size(), 6);
+        Assertions.assertEquals(relayRequestList.size, 6)
 
-        return relayRequestList;
+        return relayRequestList
     }
 
     @Test
-    void find_all_by_receiver_type_containing() {
+    fun find_all_by_receiver_type_containing() {
         // Arrange
-        final List<RelayRequest> relayRequestList = makeRequest();
-        relayRepository.saveAll(relayRequestList).blockLast();
-        final PageRequest pageRequest = PageRequest.of(0, 10);
+        val relayRequestList = makeRequest()
+        relayRepository.saveAll(relayRequestList).blockLast()
+        val pageRequest = PageRequest.of(0, 10)
 
         // Act
-        var result =
-                relayRepository.findAllByReceiverTypeContaining(pageRequest, ReceiverType.SHOP);
+        val result =
+            relayRepository.findAllByReceiverTypeContaining(pageRequest, ReceiverType.SHOP)
 
         // Assert
         StepVerifier.create(result)
-                .expectNextMatches(request -> request.getReceiverType() == ReceiverType.SHOP)
-                .expectNextMatches(request -> request.getReceiverType() == ReceiverType.SHOP)
-                .expectNextMatches(request -> request.getReceiverType() == ReceiverType.SHOP)
-                .verifyComplete();
+            .expectNextMatches { request: RelayRequest -> request.receiverType == ReceiverType.SHOP }
+            .expectNextMatches { request: RelayRequest -> request.receiverType == ReceiverType.SHOP }
+            .expectNextMatches { request: RelayRequest -> request.receiverType == ReceiverType.SHOP }
+            .verifyComplete()
+    }
+
+    companion object {
+        @Container
+        @JvmStatic
+        private val mongoContainer = MongoDBContainer("mongodb/mongodb-community-server:latest")
+
+        @DynamicPropertySource
+        @JvmStatic
+        fun configure(registry: DynamicPropertyRegistry) {
+            registry.add("spring.data.mongodb.uri") { mongoContainer.replicaSetUrl }
+        }
     }
 }
