@@ -102,7 +102,7 @@ public class RelayService {
     public void sendAlert() {
         log.info("send alert");
         relayRepository
-                .findAllByIsAcceptedAndIsEnabled(false, true)
+                .findAllByAcceptedAndEnabled(false, true)
                 .doOnNext(
                         relayRequest -> {
                             Sinks.Many<String> sink =
