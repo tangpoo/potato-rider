@@ -48,7 +48,7 @@ repositories {
 
 sourceSets {
     integrationTest {
-        java.srcDir "$projectDir/src/integrationTest/java"
+        java.srcDir "$projectDir/src/integrationTest/kotlin"
         resources.srcDir "$projectDir/src/integrationTest/resources"
         compileClasspath += main.output + test.output
         runtimeClasspath += main.output + test.output
