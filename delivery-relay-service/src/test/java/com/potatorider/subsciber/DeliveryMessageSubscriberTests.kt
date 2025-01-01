@@ -1,60 +1,94 @@
-//package com.potatorider.subsciber;
-//
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.Mockito.times;
-//import static org.mockito.Mockito.verify;
-//import static org.mockito.Mockito.when;
-//
-//import com.potatorider.domain.Delivery;
-//import com.potatorider.domain.ReceiverType;
-//import com.potatorider.service.RelayService;
-//import com.potatorider.subscriber.DeliveryMessageSubscriber;
-//
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//
-//import reactor.core.publisher.Mono;
-//import reactor.test.StepVerifier;
-//
-//@ExtendWith(MockitoExtension.class)
-//public class DeliveryMessageSubscriberTests {
-//
-//    @InjectMocks private DeliveryMessageSubscriber deliveryMessageSubscriber;
-//
-//    @Mock private RelayService relayService;
-//
-//    @Test
-//    public void add_delivery_message() {
-//        // Arrange
-//        Delivery delivery = new Delivery();
-//
-//        when(relayService.saveDelivery(any(Delivery.class), any(ReceiverType.class)))
-//                .thenReturn(Mono.empty());
-//
-//        // Act
-//        var result = deliveryMessageSubscriber.processAddDeliveryMessage(delivery);
-//
-//        // Assert
-//        StepVerifier.create(result).expectNext().verifyComplete();
-//        verify(relayService, times(1)).saveDelivery(any(Delivery.class), any(ReceiverType.class));
-//    }
-//
-//    @Test
-//    public void set_rider_message() {
-//        // Arrange
-//        Delivery delivery = new Delivery();
-//
-//        when(relayService.saveDelivery(any(Delivery.class), any(ReceiverType.class)))
-//                .thenReturn(Mono.empty());
-//
-//        // Act
-//        var result = deliveryMessageSubscriber.processSetRiderMessage(delivery);
-//
-//        // Assert
-//        StepVerifier.create(result).expectNext().verifyComplete();
-//        verify(relayService, times(1)).saveDelivery(any(Delivery.class), any(ReceiverType.class));
-//    }
-//}
+package com.potatorider.subsciber
+
+import com.potatorider.domain.Delivery
+import com.potatorider.domain.ReceiverType
+import com.potatorider.service.RelayService
+import com.potatorider.subscriber.DeliveryMessageSubscriber
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.junit.jupiter.MockitoExtension
+import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
+import java.time.LocalDateTime
+
+@ExtendWith(MockitoExtension::class)
+class DeliveryMessageSubscriberTests{
+
+    @InjectMocks
+    lateinit var deliveryMessageSubscriber: DeliveryMessageSubscriber
+    @Mock
+    lateinit var relayService: RelayService
+
+    @Test
+    fun add_delivery_message() {
+        // Arrange
+        val delivery = createInvalidDelivery()
+
+        Mockito.`when`(
+            relayService.saveDelivery(
+                ArgumentMatchers.any(
+                    Delivery::class.java
+                ), ArgumentMatchers.any(
+                    ReceiverType::class.java
+                )
+            )
+        )
+            .thenReturn(Mono.empty())
+
+        // Act
+        val result = deliveryMessageSubscriber.processAddDeliveryMessage(delivery)
+
+        // Assert
+        StepVerifier.create(result).expectNext().verifyComplete()
+        Mockito.verify(relayService, Mockito.times(1)).saveDelivery(
+            ArgumentMatchers.any(
+                Delivery::class.java
+            ), ArgumentMatchers.any(
+                ReceiverType::class.java
+            )
+        )
+    }
+
+    @Test
+    fun set_rider_message() {
+        // Arrange
+        val delivery = createInvalidDelivery()
+
+        Mockito.`when`(
+            relayService.saveDelivery(
+                ArgumentMatchers.any(
+                    Delivery::class.java
+                ), ArgumentMatchers.any(
+                    ReceiverType::class.java
+                )
+            )
+        )
+            .thenReturn(Mono.empty())
+
+        // Act
+        val result = deliveryMessageSubscriber.processSetRiderMessage(delivery)
+
+        // Assert
+        StepVerifier.create(result).expectNext().verifyComplete()
+        Mockito.verify(relayService, Mockito.times(1)).saveDelivery(
+            ArgumentMatchers.any(
+                Delivery::class.java
+            ), ArgumentMatchers.any(
+                ReceiverType::class.java
+            )
+        )
+    }
+
+    private fun createInvalidDelivery() = Delivery(
+        orderId = "",
+        shopId = "",
+        customerId = "",
+        address = "",
+        phoneNumber = "",
+        orderTime = LocalDateTime.now()
+    )
+}
