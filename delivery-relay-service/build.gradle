@@ -1,3 +1,12 @@
+buildscript {
+    ext.kotlin_version = '1.9.0'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.1'
@@ -127,6 +136,7 @@ sonarqube {
 }
 
 apply plugin: 'idea'
+apply plugin: 'kotlin'
 idea {
     module {
         testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
@@ -168,6 +178,7 @@ dependencies {
 
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 tasks.named('test') {
