@@ -7,21 +7,18 @@ import com.potatorider.subscriber.DeliveryMessageSubscriber
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers
-import org.mockito.InjectMocks
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.mock
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import java.time.LocalDateTime
 
 @ExtendWith(MockitoExtension::class)
-class DeliveryMessageSubscriberTests{
+class DeliveryMessageSubscriberTests {
 
-    @InjectMocks
-    lateinit var deliveryMessageSubscriber: DeliveryMessageSubscriber
-    @Mock
-    lateinit var relayService: RelayService
+    private val relayService: RelayService = mock()
+    private val deliveryMessageSubscriber = DeliveryMessageSubscriber(relayService)
 
     @Test
     fun add_delivery_message() {
