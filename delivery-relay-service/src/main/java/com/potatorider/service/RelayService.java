@@ -56,6 +56,7 @@ public class RelayService {
         return relayRepository.findAllByReceiverTypeContaining(pageable, ReceiverType.AGENCY);
     }
 
+    // 조회되지 않은 요청 실시간 갱신
     public Flux<ServerSentEvent<RelayRequest>> streamRelayRequests(
             final String lastEventId, final String receiverId) {
         Sinks.Many<RelayRequest> requestSink = relayRequestSinkMap.get(receiverId);
@@ -79,6 +80,7 @@ public class RelayService {
                 .retry(3);
     }
 
+    // 승인 or 거절되지 않은 요청 실시간 알림
     public Flux<ServerSentEvent<String>> streamAlert(final String receiverId) {
         Sinks.Many<String> alertSink = notAcceptedSinkMap.get(receiverId);
 
@@ -95,6 +97,7 @@ public class RelayService {
                 .retry(3);
     }
 
+    // 승인 or 거절되지 않은 요청 3분 간격 알림
     @Scheduled(fixedRate = 300000)
     public void sendAlert() {
         log.info("send alert");
