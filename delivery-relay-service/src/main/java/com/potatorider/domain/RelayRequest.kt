@@ -10,7 +10,7 @@ class RelayRequest(
     val delivery: Delivery
 ) {
     @Id
-    val id: String? = null
-    val isAccepted = false
-    val isEnabled = true
+    var id: String? = null
+    var isAccepted = false
+    var isEnabled = true
 }
