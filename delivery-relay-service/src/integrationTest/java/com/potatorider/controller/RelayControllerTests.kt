@@ -1,117 +1,122 @@
-package com.potatorider.controller;
+package com.potatorider.controller
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import com.potatorider.domain.Delivery;
-import com.potatorider.domain.ReceiverType;
-import com.potatorider.domain.RelayRequest;
-import com.potatorider.repository.RelayRepository;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.web.reactive.server.WebTestClient;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.potatorider.createInvalidDelivery
+import com.potatorider.domain.ReceiverType
+import com.potatorider.domain.RelayRequest
+import com.potatorider.repository.RelayRepository
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.web.reactive.server.WebTestClient
+import org.testcontainers.containers.MongoDBContainer
+import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
 
 @AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @Testcontainers
-public class RelayControllerTests {
+class RelayControllerTests {
+    @Autowired
+    lateinit var testClient: WebTestClient
 
-    @Autowired private WebTestClient testClient;
-
-    @Autowired private RelayRepository relayRepository;
-
-    @Container
-    private static final MongoDBContainer mongoContainer =
-            new MongoDBContainer("mongodb/mongodb-community-server:latest");
-
-    @DynamicPropertySource
-    static void configure(DynamicPropertyRegistry registry) {
-        registry.add("spring.data.mongodb.uri", mongoContainer::getReplicaSetUrl);
-    }
+    @Autowired
+    lateinit var relayRepository: RelayRepository
 
     @AfterEach
-    void tearDown() {
-        relayRepository.deleteAll().block();
+    fun tearDown() {
+        relayRepository.deleteAll().block()
     }
 
-    private List<RelayRequest> makeRequest() {
+    private fun makeRequest(): List<RelayRequest> {
+        val relayRequestList: MutableList<RelayRequest> = ArrayList()
 
-        List<RelayRequest> relayRequestList = new ArrayList<>();
-
-        for (int i = 0; i < 3; i++) {
-            RelayRequest relayRequest1 =
-                    new RelayRequest(ReceiverType.SHOP, "shop-" + i, new Delivery());
-            RelayRequest relayRequest2 =
-                    new RelayRequest(ReceiverType.AGENCY, "agency-" + i, new Delivery());
-            relayRequestList.add(relayRequest1);
-            relayRequestList.add(relayRequest2);
+        for (i in 0..2) {
+            val relayRequest1 =
+                RelayRequest(ReceiverType.SHOP, "shop-$i", createInvalidDelivery())
+            val relayRequest2 =
+                RelayRequest(ReceiverType.AGENCY, "agency-$i", createInvalidDelivery())
+            relayRequestList.add(relayRequest1)
+            relayRequestList.add(relayRequest2)
         }
 
-        assertEquals(relayRequestList.size(), 6);
+        Assertions.assertEquals(relayRequestList.size, 6)
 
-        return relayRequestList;
+        return relayRequestList
     }
 
     @Test
-    void find_all_request() {
+    fun find_all_request() {
         // Arrange
-        final List<RelayRequest> relayRequestList = makeRequest();
-        relayRepository.saveAll(relayRequestList).blockLast();
+        val relayRequestList = makeRequest()
+        relayRepository.saveAll(relayRequestList).blockLast()
 
         // Act
-        var result =
-                testClient
-                        .get()
-                        .uri("/api/v1/relay/shop")
-                        .exchange()
-                        .expectStatus()
-                        .isOk()
-                        .expectBodyList(RelayRequest.class)
-                        .returnResult()
-                        .getResponseBody();
+        val result =
+            testClient
+                .get()
+                .uri("/api/v1/relay/shop")
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(RelayRequest::class.java)
+                .returnResult()
+                .responseBody
 
         // Assert
-        assertThat(result.size()).isEqualTo(3);
-        assertThat(result.get(0).getReceiverType()).isEqualTo(ReceiverType.SHOP);
-        assertThat(result.get(1).getReceiverType()).isEqualTo(ReceiverType.SHOP);
-        assertThat(result.get(2).getReceiverType()).isEqualTo(ReceiverType.SHOP);
+        assertThat(result.size).isEqualTo(3)
+        assertThat(result[0].receiverType)
+            .isEqualTo(ReceiverType.SHOP)
+        assertThat(result[1].receiverType)
+            .isEqualTo(ReceiverType.SHOP)
+        assertThat(result[2].receiverType)
+            .isEqualTo(ReceiverType.SHOP)
     }
 
     @Test
-    void find_all_agency() {
+    fun find_all_agency() {
         // Arrange
-        final List<RelayRequest> relayRequestList = makeRequest();
-        relayRepository.saveAll(relayRequestList).blockLast();
+        val relayRequestList = makeRequest()
+        relayRepository.saveAll(relayRequestList).blockLast()
 
         // Act
-        var result =
-                testClient
-                        .get()
-                        .uri("/api/v1/relay/agency")
-                        .exchange()
-                        .expectStatus()
-                        .isOk()
-                        .expectBodyList(RelayRequest.class)
-                        .returnResult()
-                        .getResponseBody();
+        val result =
+            testClient
+                .get()
+                .uri("/api/v1/relay/agency")
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(RelayRequest::class.java)
+                .returnResult()
+                .responseBody
 
         // Assert
-        assertThat(result.size()).isEqualTo(3);
-        assertThat(result.get(0).getReceiverType()).isEqualTo(ReceiverType.AGENCY);
-        assertThat(result.get(1).getReceiverType()).isEqualTo(ReceiverType.AGENCY);
-        assertThat(result.get(2).getReceiverType()).isEqualTo(ReceiverType.AGENCY);
+        assertThat(result.size).isEqualTo(3)
+        assertThat(result[0].receiverType)
+            .isEqualTo(ReceiverType.AGENCY)
+        assertThat(result[1].receiverType)
+            .isEqualTo(ReceiverType.AGENCY)
+        assertThat(result[2].receiverType)
+            .isEqualTo(ReceiverType.AGENCY)
+    }
+
+
+    companion object {
+        @Container
+        @JvmStatic
+        private val mongoContainer = MongoDBContainer("mongodb/mongodb-community-server:latest")
+
+        @DynamicPropertySource
+        @JvmStatic
+        fun configure(registry: DynamicPropertyRegistry) {
+            registry.add("spring.data.mongodb.uri") { mongoContainer.replicaSetUrl }
+        }
     }
 }

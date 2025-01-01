@@ -1,5 +1,6 @@
 package com.potatorider.repostiory;
 
+import static com.potatorider.DeliveryStepsKt.createInvalidDelivery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.potatorider.domain.Delivery;
@@ -49,9 +50,9 @@ public class RelayRepositoryTests {
 
         for (int i = 0; i < 3; i++) {
             RelayRequest relayRequest1 =
-                    new RelayRequest(ReceiverType.SHOP, "shop-" + i, new Delivery());
+                    new RelayRequest(ReceiverType.SHOP, "shop-" + i, createInvalidDelivery());
             RelayRequest relayRequest2 =
-                    new RelayRequest(ReceiverType.AGENCY, "agency-" + i, new Delivery());
+                    new RelayRequest(ReceiverType.AGENCY, "agency-" + i, createInvalidDelivery());
             relayRequestList.add(relayRequest1);
             relayRequestList.add(relayRequest2);
         }
