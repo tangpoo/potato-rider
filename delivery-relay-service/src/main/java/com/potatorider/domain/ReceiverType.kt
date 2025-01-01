@@ -1,6 +1,6 @@
-package com.potatorider.domain;
+package com.potatorider.domain
 
-public enum ReceiverType {
+enum class ReceiverType {
     SHOP,
-    AGENCY;
+    AGENCY
 }
