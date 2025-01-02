@@ -1,11 +1,12 @@
-package com.potatorider
+package com.potatorider;
 
-import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-internal class DeliveryRelayServiceApplicationTests {
+class DeliveryRelayServiceApplicationTests {
+
     @Test
-    fun contextLoads() {
+    void contextLoads() {
     }
 }
