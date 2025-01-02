@@ -22,24 +22,21 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.containers.RabbitMQContainer
 import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class RelayControllerSseTests {
+@Testcontainers
+class RelayControllerSseTests @Autowired constructor(
+    private var testClient: WebTestClient,
+    private var relayService: RelayService,
+    private var relayRepository: RelayRepository
+) {
     @LocalServerPort
     private val port = 0
-
-    @Autowired
-    lateinit var testClient: WebTestClient
-
-    @Autowired
-    lateinit var relayService: RelayService
-
-    @Autowired
-    lateinit var relayRepository: RelayRepository
 
     @AfterEach
     fun tearDown() {
