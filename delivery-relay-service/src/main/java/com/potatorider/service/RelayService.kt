@@ -54,12 +54,12 @@ class RelayService(private val relayRepository: RelayRepository) {
 
     // 조회되지 않은 요청 실시간 갱신
     fun streamRelayRequests(
-        lastEventId: String, receiverId: String
+        lastEventId: String?, receiverId: String
     ): Flux<ServerSentEvent<RelayRequest>> {
         val requestSink = relayRequestSinkMap[receiverId] ?: return Flux.empty()
 
         val relayRequestFlux = requestSink.asFlux().apply {
-            if (lastEventId.isNotEmpty()) {
+            lastEventId?.let {
                 filter { (it.id?.compareTo(lastEventId) ?: -1) > 0 }
             }
         }
