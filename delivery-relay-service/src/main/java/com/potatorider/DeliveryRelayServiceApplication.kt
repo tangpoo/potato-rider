@@ -1,14 +1,15 @@
-package com.potatorider;
+package com.potatorider
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
+import org.springframework.scheduling.annotation.EnableScheduling
 
 @SpringBootApplication
 @EnableScheduling
-public class DeliveryRelayServiceApplication {
+open class DeliveryRelayServiceApplication
 
-    public static void main(String[] args) {
-        SpringApplication.run(DeliveryRelayServiceApplication.class, args);
-    }
+fun main(args: Array<String>) {
+    runApplication<DeliveryRelayServiceApplication>(*args)
 }
+

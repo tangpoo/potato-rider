@@ -11,6 +11,6 @@ class RelayRequest(
 ) {
     @Id
     var id: String? = null
-    var isAccepted = false
-    var isEnabled = true
+    var isAccepted: Boolean = false
+    var isEnabled: Boolean = true
 }
