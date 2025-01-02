@@ -22,24 +22,22 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.containers.RabbitMQContainer
 import org.testcontainers.junit.jupiter.Container
+import org.testcontainers.junit.jupiter.Testcontainers
+
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 import java.time.LocalDateTime
 
 @AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class RelayControllerSseTests {
+@Testcontainers
+class RelayControllerSseTests @Autowired constructor(
+    private var testClient: WebTestClient,
+    private var relayService: RelayService,
+    private var relayRepository: RelayRepository
+) {
     @LocalServerPort
     private val port = 0
-
-    @Autowired
-    lateinit var testClient: WebTestClient
-
-    @Autowired
-    lateinit var relayService: RelayService
-
-    @Autowired
-    lateinit var relayRepository: RelayRepository
 
     @AfterEach
     fun tearDown() {
@@ -67,7 +65,8 @@ class RelayControllerSseTests {
                 .isOk()
                 .returnResult<ServerSentEvent<RelayRequest>>(
                     object : ParameterizedTypeReference<ServerSentEvent<RelayRequest>>() {})
-                .getResponseBody()
+                .responseBody
+
 
         // Assert
         StepVerifier.create(eventFlux)
@@ -115,18 +114,10 @@ class RelayControllerSseTests {
 
     companion object {
         @Container
-        @JvmStatic
         private val rabbitmqContainer = RabbitMQContainer("rabbitmq:latest")
 
         @Container
-        @JvmStatic
         private val mongoContainer = MongoDBContainer("mongodb/mongodb-community-server:latest")
-
-        @DynamicPropertySource
-        @JvmStatic
-        fun configure(registry: DynamicPropertyRegistry) {
-            registry.add("spring.data.mongodb.uri") { mongoContainer.replicaSetUrl }
-        }
 
         @BeforeAll
         @JvmStatic
@@ -134,5 +125,14 @@ class RelayControllerSseTests {
             rabbitmqContainer.start()
             mongoContainer.start()
         }
+
+        @DynamicPropertySource
+        @JvmStatic
+        fun configure(registry: DynamicPropertyRegistry) {
+            registry.add("spring.rabbitmq.host") { rabbitmqContainer.host }
+            registry.add("spring.rabbitmq.port") { rabbitmqContainer.amqpPort }
+            registry.add("spring.data.mongodb.uri") { mongoContainer.replicaSetUrl }
+        }
+
     }
 }
