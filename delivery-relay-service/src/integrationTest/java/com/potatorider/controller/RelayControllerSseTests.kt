@@ -23,6 +23,7 @@ import org.testcontainers.containers.MongoDBContainer
 import org.testcontainers.containers.RabbitMQContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 import java.time.LocalDateTime
@@ -65,6 +66,7 @@ class RelayControllerSseTests @Autowired constructor(
                 .returnResult<ServerSentEvent<RelayRequest>>(
                     object : ParameterizedTypeReference<ServerSentEvent<RelayRequest>>() {})
                 .responseBody
+
 
         // Assert
         StepVerifier.create(eventFlux)
@@ -131,5 +133,6 @@ class RelayControllerSseTests @Autowired constructor(
             registry.add("spring.rabbitmq.port") { rabbitmqContainer.amqpPort }
             registry.add("spring.data.mongodb.uri") { mongoContainer.replicaSetUrl }
         }
+
     }
 }
