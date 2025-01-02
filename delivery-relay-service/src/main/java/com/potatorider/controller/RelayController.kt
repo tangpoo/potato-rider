@@ -13,13 +13,13 @@ import reactor.core.publisher.Flux
 @RequestMapping("/api/v1/relay")
 class RelayController(private val relayService: RelayService) {
 
-//    @GetMapping("/shop")
-//    fun findAllRequest(
-//        @RequestParam(defaultValue = "0") page: Int,
-//        @RequestParam(defaultValue = "10") size: Int
-//    ): Flux<RelayRequest> {
-//        return relayService.findAllByShop(page, size)
-//    }
+    @GetMapping("/shop")
+    fun findAllRequest(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int
+    ): Flux<RelayRequest> {
+        return relayService.findAllByShop(page, size)
+    }
 
     @GetMapping("/agency")
     fun findAllAgency(
