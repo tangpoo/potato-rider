@@ -10,7 +10,7 @@
 ![image](https://github.com/user-attachments/assets/93de8917-9f7d-43e7-90f4-c2a926ede7df)
 
 ## 주요 기술
-- 언어 : Java 17
+- 언어 : Kotlin 1.9 / Java 17
 - 프레임워크 : Spring Boot, Spring WebFlux
 - 빌드 도구 : Gradle
 - API 문서화 : Swagger
