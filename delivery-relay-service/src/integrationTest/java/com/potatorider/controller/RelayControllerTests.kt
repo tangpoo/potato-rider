@@ -70,7 +70,7 @@ class RelayControllerTests {
                 .responseBody
 
         // Assert
-        assertThat(result.size).isEqualTo(3)
+        assertThat(result!!.size).isEqualTo(3)
         assertThat(result[0].receiverType)
             .isEqualTo(ReceiverType.SHOP)
         assertThat(result[1].receiverType)
@@ -98,7 +98,7 @@ class RelayControllerTests {
                 .responseBody
 
         // Assert
-        assertThat(result.size).isEqualTo(3)
+        assertThat(result!!.size).isEqualTo(3)
         assertThat(result[0].receiverType)
             .isEqualTo(ReceiverType.AGENCY)
         assertThat(result[1].receiverType)

@@ -6,8 +6,8 @@ import com.potatorider.domain.DeliveryStatus
 import com.potatorider.publihser.DeliveryPublisher
 import com.potatorider.repository.DeliveryRepository
 import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,7 +32,7 @@ class DeliveryControllerTests @Autowired constructor(
     private var deliveryRepository: DeliveryRepository,
     @SpyBean var deliveryPublisher: DeliveryPublisher
 ) {
-    @BeforeEach
+    @AfterEach
     fun setUp() {
         val setUpDatabase = deliveryRepository.deleteAll()
         StepVerifier.create(setUpDatabase).verifyComplete()
