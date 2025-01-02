@@ -1,14 +1,6 @@
-buildscript {
-    ext.kotlin_version = '1.9.0'
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
+
 plugins {
-    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version "1.9.10"
     id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.5'
     id 'jacoco'
@@ -186,7 +178,6 @@ dependencies {
 
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 tasks.named('test') {
