@@ -11,5 +11,5 @@ interface RelayRepository : ReactiveMongoRepository<RelayRequest, String> {
         pageable: Pageable, receiverType: ReceiverType
     ): Flux<RelayRequest>
 
-    fun findAllByAcceptedAndEnabled(isAccepted: Boolean, enabled: Boolean): Flux<RelayRequest>
+    fun findAllByIsAcceptedAndIsEnabled(isAccepted: Boolean, enabled: Boolean): Flux<RelayRequest>
 }

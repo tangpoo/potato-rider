@@ -97,7 +97,7 @@ class RelayService(private val relayRepository: RelayRepository) {
     fun sendAlert() {
         log.info("send alert")
         relayRepository
-            .findAllByAcceptedAndEnabled(false, true)
+            .findAllByIsAcceptedAndIsEnabled(false, true)
             .doOnNext { relayRequest ->
                 notAcceptedSinkMap.computeIfAbsent(
                     relayRequest.receiverId
