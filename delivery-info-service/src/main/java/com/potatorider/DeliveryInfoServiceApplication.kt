@@ -1,12 +1,11 @@
-package com.potatorider;
+package com.potatorider
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 
 @SpringBootApplication
-public class DeliveryInfoServiceApplication {
+open class DeliveryInfoServiceApplication
 
-    public static void main(String[] args) {
-        SpringApplication.run(DeliveryInfoServiceApplication.class, args);
-    }
+fun main(args: Array<String>) {
+    runApplication<DeliveryInfoServiceApplication>(*args)
 }
