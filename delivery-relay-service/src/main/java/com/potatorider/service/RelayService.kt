@@ -47,10 +47,16 @@ class RelayService(private val relayRepository: RelayRepository) {
     }
 
     fun findAllByShop(page: Int, size: Int): Flux<RelayRequest> =
-        relayRepository.findAllByReceiverTypeContaining(PageRequest.of(page, size), ReceiverType.SHOP)
+        relayRepository.findAllByReceiverTypeContaining(
+            PageRequest.of(page, size),
+            ReceiverType.SHOP
+        )
 
     fun findAllByAgency(page: Int, size: Int): Flux<RelayRequest> =
-        relayRepository.findAllByReceiverTypeContaining(PageRequest.of(page, size), ReceiverType.AGENCY)
+        relayRepository.findAllByReceiverTypeContaining(
+            PageRequest.of(page, size),
+            ReceiverType.AGENCY
+        )
 
     // 조회되지 않은 요청 실시간 갱신
     fun streamRelayRequests(
