@@ -115,24 +115,24 @@ class RelayControllerSseTests {
 
     companion object {
         @Container
-        @JvmStatic
         private val rabbitmqContainer = RabbitMQContainer("rabbitmq:latest")
 
         @Container
-        @JvmStatic
         private val mongoContainer = MongoDBContainer("mongodb/mongodb-community-server:latest")
-
-        @DynamicPropertySource
-        @JvmStatic
-        fun configure(registry: DynamicPropertyRegistry) {
-            registry.add("spring.data.mongodb.uri") { mongoContainer.replicaSetUrl }
-        }
 
         @BeforeAll
         @JvmStatic
         fun beforeAll() {
             rabbitmqContainer.start()
             mongoContainer.start()
+        }
+
+        @DynamicPropertySource
+        @JvmStatic
+        fun configure(registry: DynamicPropertyRegistry) {
+            registry.add("spring.rabbitmq.host") { rabbitmqContainer.host }
+            registry.add("spring.rabbitmq.port") { rabbitmqContainer.amqpPort }
+            registry.add("spring.data.mongodb.uri") { mongoContainer.replicaSetUrl }
         }
     }
 }
