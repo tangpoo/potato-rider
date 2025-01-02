@@ -127,7 +127,6 @@ sonarqube {
 }
 
 apply plugin: 'idea'
-apply plugin: 'kotlin'
 idea {
     module {
         testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
@@ -177,8 +176,4 @@ dependencies {
 
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
 }
