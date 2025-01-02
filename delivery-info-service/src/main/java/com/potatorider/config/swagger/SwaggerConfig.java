@@ -13,7 +13,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-            .info(new Info().title("openAPI.").version("1.0").description("swagger-ui 화면입니다"));
+                .info(new Info().title("openAPI.").version("1.0").description("swagger-ui 화면입니다"));
     }
 
     @Bean
@@ -21,9 +21,9 @@ public class SwaggerConfig {
         String[] paths = {"/api/v1/**"};
         String[] packagesToScan = {"com.potatorider"};
         return GroupedOpenApi.builder()
-            .group("springdoc-openapi")
-            .pathsToMatch(paths)
-            .packagesToScan(packagesToScan)
-            .build();
+                .group("springdoc-openapi")
+                .pathsToMatch(paths)
+                .packagesToScan(packagesToScan)
+                .build();
     }
 }
