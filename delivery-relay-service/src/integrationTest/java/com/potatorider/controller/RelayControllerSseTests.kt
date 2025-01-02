@@ -67,7 +67,7 @@ class RelayControllerSseTests {
                 .isOk()
                 .returnResult<ServerSentEvent<RelayRequest>>(
                     object : ParameterizedTypeReference<ServerSentEvent<RelayRequest>>() {})
-                .getResponseBody()
+                .responseBody
 
         // Assert
         StepVerifier.create(eventFlux)
