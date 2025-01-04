@@ -1,16 +1,8 @@
-package com.potatorider.domain;
+package com.potatorider.domain
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class RiderLocation {
-
-    private String id;
-    private String deliveryId;
-    private Float latitude;
-    private Float longitude;
-}
+data class RiderLocation(
+    val id: String? = null,
+    val deliveryId: String? = null,
+    val latitude: Float? = null,
+    val longitude: Float? = null
+)
