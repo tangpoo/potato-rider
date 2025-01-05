@@ -14,7 +14,7 @@ open class DeliveryRepositoryImpl(
     @Value("\${services.deliveryInfoService.path}")
     lateinit var uriDeliveryInfoService: String
 
-    private val webClient: WebClient by lazy { webClientBuilder.build() }
+    private val webClient: WebClient = webClientBuilder.build()
 
     override fun isPickedUp(deliveryId: String): Mono<Boolean> {
         return webClient
