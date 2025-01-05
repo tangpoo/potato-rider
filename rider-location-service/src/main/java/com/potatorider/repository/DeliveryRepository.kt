@@ -1,8 +1,7 @@
-package com.potatorider.repository;
+package com.potatorider.repository
 
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Mono
 
-public interface DeliveryRepository {
-
-    Mono<Boolean> isPickedUp(String deliveryId);
+interface DeliveryRepository {
+    fun isPickedUp(deliveryId: String): Mono<Boolean>
 }
