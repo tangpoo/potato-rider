@@ -1,44 +1,43 @@
-package com.potatorider.service;
+package com.potatorider.service
 
-import com.potatorider.domain.RiderLocation;
-import com.potatorider.repository.DeliveryRepository;
-import com.potatorider.repository.RiderLocationRepository;
-
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Service;
-
-import reactor.core.publisher.Mono;
+import com.potatorider.domain.RiderLocation
+import com.potatorider.repository.DeliveryRepository
+import com.potatorider.repository.RiderLocationRepository
+import lombok.RequiredArgsConstructor
+import org.springframework.stereotype.Service
+import reactor.core.publisher.Mono
 
 @Service
-@RequiredArgsConstructor
-public class RiderLocationService {
+class RiderLocationService(
+    private val riderLocationRepository: RiderLocationRepository,
+    private val deliveryRepository: DeliveryRepository
+) {
 
-    private final RiderLocationRepository riderLocationRepository;
-    private final DeliveryRepository deliveryRepository;
-
-    public Mono<Boolean> tryPutOperation(final RiderLocation riderLocation) {
+    fun tryPutOperation(riderLocation: RiderLocation): Mono<Boolean> {
         return riderLocationRepository
-                .setIfPresent(riderLocation)
-                .flatMap(isSaved -> orElseSetNew(isSaved, riderLocation));
+            .setIfPresent(riderLocation)
+            .flatMap { isSaved: Boolean -> orElseSetNew(isSaved, riderLocation) }
     }
 
-    private Mono<Boolean> orElseSetNew(final Boolean isSaved, final RiderLocation riderLocation) {
-        return isSaved ? Mono.just(true) : doSetNew(riderLocation);
+    private fun orElseSetNew(isSaved: Boolean, riderLocation: RiderLocation): Mono<Boolean> {
+        return if (isSaved) Mono.just(true) else doSetNew(riderLocation)
     }
 
-    private Mono<Boolean> doSetNew(final RiderLocation riderLocation) {
+    private fun doSetNew(riderLocation: RiderLocation): Mono<Boolean> {
         return deliveryRepository
-                .isPickedUp(riderLocation.getDeliveryId())
-                .flatMap(isPickedUp -> setIfPickedUp(isPickedUp, riderLocation));
+            .isPickedUp(riderLocation.deliveryId!!)
+            .flatMap { isPickedUp: Boolean -> setIfPickedUp(isPickedUp, riderLocation) }
     }
 
-    private Mono<Boolean> setIfPickedUp(
-            final Boolean isPickedUp, final RiderLocation riderLocation) {
-        return isPickedUp ? riderLocationRepository.setIfAbsent(riderLocation) : Mono.just(false);
+    private fun setIfPickedUp(
+        isPickedUp: Boolean, riderLocation: RiderLocation
+    ): Mono<Boolean> {
+        return if (isPickedUp) riderLocationRepository.setIfAbsent(riderLocation) else Mono.just(
+            false
+        )
     }
 
-    public Mono<RiderLocation> getLocation(final String locationId) {
-        return riderLocationRepository.getLocation(locationId);
+    fun getLocation(locationId: String): Mono<RiderLocation> {
+        return riderLocationRepository.getLocation(locationId)
     }
 }
