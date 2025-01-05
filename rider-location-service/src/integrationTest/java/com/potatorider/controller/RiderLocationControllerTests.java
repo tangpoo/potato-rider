@@ -12,6 +12,7 @@ import com.potatorider.domain.RiderLocation;
 import com.potatorider.domain.RiderLocationSteps;
 import com.potatorider.repository.DeliveryRepositoryImpl;
 
+import com.potatorider.repository.RiderLocationRepositoryImpl;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
@@ -48,9 +50,12 @@ public class RiderLocationControllerTests {
 
     @SpyBean private DeliveryRepositoryImpl deliveryRepository;
 
+    @SpyBean
+    private RiderLocationRepositoryImpl riderLocationRepository;
+
     private WireMockServer wireMockServer;
 
-    String riderLocationMapping = "/api/v1/rider/location";
+    private String riderLocationMapping = "/api/v1/rider/location";
 
     @DynamicPropertySource
     static void redisProperties(DynamicPropertyRegistry registry) {
@@ -62,6 +67,7 @@ public class RiderLocationControllerTests {
     void setUp() {
         wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort());
         wireMockServer.start();
+        riderLocationRepository = new RiderLocationRepositoryImpl(redisTemplate);
         deliveryRepository.setUriDeliveryInfoService("http://127.0.0.1:" + wireMockServer.port());
     }
 
