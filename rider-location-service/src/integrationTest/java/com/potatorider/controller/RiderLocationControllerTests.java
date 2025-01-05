@@ -9,7 +9,7 @@ import static org.mockito.Mockito.*;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.potatorider.domain.RiderLocation;
-import com.potatorider.domain.RiderLocationSteps;
+import com.potatorider.domain.RiderLocationStepsKt;
 import com.potatorider.repository.DeliveryRepositoryImpl;
 
 import com.potatorider.repository.RiderLocationRepositoryImpl;
@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
@@ -74,7 +73,7 @@ public class RiderLocationControllerTests {
     @Test
     void update_location_post() {
         // Arrange
-        final RiderLocation riderLocation = RiderLocationSteps.createRiderLocation();
+        final RiderLocation riderLocation = RiderLocationStepsKt.createRiderLocation();
         wireMockServer.stubFor(
                 get(urlMatching("/api/v1/delivery/.*?/is-picked-up"))
                         .willReturn(
@@ -100,7 +99,7 @@ public class RiderLocationControllerTests {
     @Test
     void update_location_put() {
         // Arrange
-        final RiderLocation riderLocation = RiderLocationSteps.createRiderLocation();
+        final RiderLocation riderLocation = RiderLocationStepsKt.createRiderLocation();
 
         redisTemplate.opsForValue().set(riderLocation.getId(), riderLocation).block();
 
@@ -124,7 +123,7 @@ public class RiderLocationControllerTests {
     @Test
     void get_location() {
         // Arrange
-        final RiderLocation riderLocation = RiderLocationSteps.createRiderLocation();
+        final RiderLocation riderLocation = RiderLocationStepsKt.createRiderLocation();
 
         redisTemplate.opsForValue().set(riderLocation.getId(), riderLocation).block();
 

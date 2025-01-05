@@ -2,8 +2,8 @@ package com.potatorider.repository;
 
 import com.potatorider.config.RedisConfiguration;
 import com.potatorider.domain.RiderLocation;
-import com.potatorider.domain.RiderLocationSteps;
 
+import com.potatorider.domain.RiderLocationStepsKt;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
@@ -40,7 +40,7 @@ public class RiderLocationRepositoryImplTests {
     @Test
     void set_if_present() {
         // Arrange
-        final RiderLocation riderLocation = RiderLocationSteps.createRiderLocation();
+        final RiderLocation riderLocation = RiderLocationStepsKt.createRiderLocation();
 
         redisTemplate.opsForValue().set(riderLocation.getId(), riderLocation).block();
 

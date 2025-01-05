@@ -1,12 +1,12 @@
-package com.potatorider;
+package com.potatorider
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.SpringApplication
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 
 @SpringBootApplication
-public class RiderLocationServiceApplication {
+open class RiderLocationServiceApplication
 
-    public static void main(String[] args) {
-        SpringApplication.run(RiderLocationServiceApplication.class, args);
-    }
+fun main(args: Array<String>) {
+    runApplication<RiderLocationServiceApplication>(*args)
 }

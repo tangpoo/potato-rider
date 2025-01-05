@@ -5,7 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.potatorider.domain.RiderLocation;
-import com.potatorider.domain.RiderLocationSteps;
+import com.potatorider.domain.RiderLocationStepsKt;
 import com.potatorider.repository.DeliveryRepository;
 import com.potatorider.repository.RiderLocationRepository;
 
@@ -34,7 +34,7 @@ public class RiderLocationServiceTests {
         @Test
         void location_is_present_redis() {
             // Arrange
-            final RiderLocation riderLocation = RiderLocationSteps.createRiderLocation();
+            final RiderLocation riderLocation = RiderLocationStepsKt.createRiderLocation();
 
             when(riderLocationRepository.setIfPresent(riderLocation)).thenReturn(Mono.just(true));
 
@@ -50,7 +50,7 @@ public class RiderLocationServiceTests {
         @Test
         void delivery_not_found_and_is_not_picked_up() {
             // Arrange
-            final RiderLocation riderLocation = RiderLocationSteps.createRiderLocation();
+            final RiderLocation riderLocation = RiderLocationStepsKt.createRiderLocation();
 
             when(riderLocationRepository.setIfPresent(riderLocation)).thenReturn(Mono.just(false));
             when(deliveryRepository.isPickedUp(riderLocation.getDeliveryId()))
@@ -69,7 +69,7 @@ public class RiderLocationServiceTests {
         @Test
         void delivery_not_found_and_is_picked_up() {
             // Arrange
-            final RiderLocation riderLocation = RiderLocationSteps.createRiderLocation();
+            final RiderLocation riderLocation = RiderLocationStepsKt.createRiderLocation();
 
             when(riderLocationRepository.setIfPresent(riderLocation)).thenReturn(Mono.just(false));
             when(deliveryRepository.isPickedUp(riderLocation.getDeliveryId()))
