@@ -7,11 +7,14 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 
 @Repository
-class DeliveryRepositoryImpl : DeliveryRepository {
-    private val webClient: WebClient = WebClient.builder().build()
+open class DeliveryRepositoryImpl(
+    private val webClientBuilder: WebClient.Builder
+) : DeliveryRepository {
 
     @Value("\${services.deliveryInfoService.path}")
-    var uriDeliveryInfoService: String? = null
+    lateinit var uriDeliveryInfoService: String
+
+    private val webClient: WebClient by lazy { webClientBuilder.build() }
 
     override fun isPickedUp(deliveryId: String): Mono<Boolean> {
         return webClient
