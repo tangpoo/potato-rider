@@ -11,7 +11,7 @@ class DeliveryRepositoryImpl : DeliveryRepository {
     private val webClient: WebClient = WebClient.builder().build()
 
     @Value("\${services.deliveryInfoService.path}")
-    private var uriDeliveryInfoService: String? = null
+    var uriDeliveryInfoService: String? = null
 
     override fun isPickedUp(deliveryId: String): Mono<Boolean> {
         return webClient
