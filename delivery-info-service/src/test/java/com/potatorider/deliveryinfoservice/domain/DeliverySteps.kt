@@ -4,7 +4,7 @@ import com.potatorider.domain.Delivery
 import com.potatorider.domain.DeliveryStatus
 import java.time.LocalDateTime
 
-fun makeValidDeliveryWithDeliveryStatus(deliveryStatus: DeliveryStatus?): Delivery {
+fun makeValidDeliveryWithDeliveryStatus(deliveryStatus: DeliveryStatus): Delivery {
     val id = "id-1234"
     val orderId = "order1"
     val riderId = "rider-1234"
