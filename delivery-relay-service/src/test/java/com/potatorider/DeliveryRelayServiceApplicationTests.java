@@ -1,12 +1,12 @@
-// package com.potatorider;
+//package com.potatorider;
 //
-// import org.junit.jupiter.api.Test;
-// import org.springframework.boot.test.context.SpringBootTest;
+//import org.junit.jupiter.api.Test;
+//import org.springframework.boot.test.context.SpringBootTest;
 //
-// @SpringBootTest
-// class DeliveryRelayServiceApplicationTests {
+//@SpringBootTest
+//class DeliveryRelayServiceApplicationTests {
 //
 //    @Test
 //    void contextLoads() {
 //    }
-// }
+//}
