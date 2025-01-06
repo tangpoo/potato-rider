@@ -108,7 +108,7 @@ class RelayService(private val relayRepository: RelayRepository) {
                 notAcceptedSinkMap.computeIfAbsent(
                     relayRequest.receiverId
                 ) { Sinks.many().replay().all() }
-                    .tryEmitNext(relayRequest.id)
+                    .tryEmitNext(relayRequest.id!!)
             }
             .subscribe()
     }
