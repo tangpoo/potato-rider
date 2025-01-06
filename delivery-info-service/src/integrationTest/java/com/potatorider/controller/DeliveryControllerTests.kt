@@ -1,6 +1,6 @@
 package com.potatorider.controller
 
-import com.potatorider.deliveryinfoservice.domain.DeliverySteps
+import com.potatorider.deliveryinfoservice.domain.makeValidDeliveryWithDeliveryStatus
 import com.potatorider.domain.Delivery
 import com.potatorider.domain.DeliveryStatus
 import com.potatorider.publihser.DeliveryPublisher
@@ -42,7 +42,7 @@ class DeliveryControllerTests @Autowired constructor(
     @Test
     fun save_delivery() {
         // Arrange
-        val delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(null)
+        val delivery = makeValidDeliveryWithDeliveryStatus(null)
 
         // Act
         val result =
@@ -58,7 +58,7 @@ class DeliveryControllerTests @Autowired constructor(
     @Test
     fun accept_delivery() {
         // Arrange
-        val delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(DeliveryStatus.REQUEST)
+        val delivery = makeValidDeliveryWithDeliveryStatus(DeliveryStatus.REQUEST)
         val saveDelivery = deliveryRepository.save(delivery).block()
 
         // Act

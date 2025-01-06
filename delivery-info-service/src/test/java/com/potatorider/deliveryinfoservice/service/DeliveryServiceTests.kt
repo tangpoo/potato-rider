@@ -1,6 +1,6 @@
 package com.potatorider.deliveryinfoservice.service
 
-import com.potatorider.deliveryinfoservice.domain.DeliverySteps.makeValidDeliveryWithDeliveryStatus
+import com.potatorider.deliveryinfoservice.domain.makeValidDeliveryWithDeliveryStatus
 import com.potatorider.domain.Delivery
 import com.potatorider.domain.DeliveryStatus.*
 import com.potatorider.exception.DeliveryNotFoundException

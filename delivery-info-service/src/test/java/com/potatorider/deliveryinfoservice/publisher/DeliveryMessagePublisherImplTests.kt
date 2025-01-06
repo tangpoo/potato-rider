@@ -1,15 +1,12 @@
 package com.potatorider.deliveryinfoservice.publisher
 
-import com.potatorider.deliveryinfoservice.domain.DeliverySteps.makeValidDeliveryWithDeliveryStatus
+import com.potatorider.deliveryinfoservice.domain.makeValidDeliveryWithDeliveryStatus
 import com.potatorider.domain.Delivery
 import com.potatorider.domain.DeliveryStatus
 import com.potatorider.publihser.DeliveryMessagePublisherImpl
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.*
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.amqp.core.AmqpTemplate
