@@ -1,260 +1,251 @@
-package com.potatorider.deliveryinfoservice.service;
+package com.potatorider.deliveryinfoservice.service
 
-import static com.potatorider.domain.DeliveryStatus.ACCEPT;
-import static com.potatorider.domain.DeliveryStatus.PICKED_UP;
-import static com.potatorider.domain.DeliveryStatus.REQUEST;
-import static com.potatorider.domain.DeliveryStatus.RIDER_SET;
+import com.potatorider.deliveryinfoservice.domain.DeliverySteps.makeValidDeliveryWithDeliveryStatus
+import com.potatorider.domain.Delivery
+import com.potatorider.domain.DeliveryStatus.*
+import com.potatorider.exception.DeliveryNotFoundException
+import com.potatorider.publihser.DeliveryPublisher
+import com.potatorider.repository.DeliveryRepository
+import com.potatorider.service.DeliveryService
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
+import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.isA;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+@ExtendWith(MockitoExtension::class)
+class DeliveryServiceTests {
+    @InjectMocks
+    private lateinit var deliveryService: DeliveryService
 
-import com.potatorider.deliveryinfoservice.domain.DeliverySteps;
-import com.potatorider.domain.Delivery;
-import com.potatorider.exception.DeliveryNotFoundException;
-import com.potatorider.publihser.DeliveryPublisher;
-import com.potatorider.repository.DeliveryRepository;
-import com.potatorider.service.DeliveryService;
+    @Mock
+    private lateinit var deliveryRepository: DeliveryRepository
 
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
-@ExtendWith(MockitoExtension.class)
-public class DeliveryServiceTests {
-
-    @InjectMocks DeliveryService deliveryService;
-
-    @Mock DeliveryRepository deliveryRepository;
-
-    @Mock DeliveryPublisher deliveryPublisher;
+    @Mock
+    private lateinit var deliveryPublisher: DeliveryPublisher
 
     @Nested
-    class Save_delivery {
-
+    internal inner class SaveDelivery {
         @Test
-        void success() {
+        fun success() {
             // Arrange
-            final Delivery delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(null);
+            val delivery = makeValidDeliveryWithDeliveryStatus(null)
 
-            when(deliveryRepository.save(isA(Delivery.class))).thenReturn(Mono.just(delivery));
-            when(deliveryPublisher.sendAddDeliveryEvent(isA(Delivery.class)))
-                    .thenReturn(Mono.just(delivery));
+            Mockito.`when`(
+                deliveryRepository.save(
+                    argThat { this is Delivery }
+                )
+            ).thenReturn(Mono.just(delivery))
+            Mockito.`when`(
+                deliveryPublisher.sendAddDeliveryEvent(
+                    argThat { true }
+                )
+            )
+                .thenReturn(Mono.just(delivery))
 
             // Act
-            var result = deliveryService.saveDelivery(delivery);
+            val result = deliveryService.saveDelivery(delivery)
 
             // Assert
-            StepVerifier.create(result).expectNext(delivery).verifyComplete();
-            verify(deliveryRepository, times(1)).save(delivery);
-            verify(deliveryPublisher, times(1)).sendAddDeliveryEvent(delivery);
+            StepVerifier.create(result).expectNext(delivery).verifyComplete()
+            Mockito.verify(deliveryRepository, Mockito.times(1)).save(delivery)
+            Mockito.verify(deliveryPublisher, Mockito.times(1)).sendAddDeliveryEvent(delivery)
         }
     }
 
     @Nested
-    class Accept_delivery {
-
+    internal inner class Accept_delivery {
         @Test
-        void success() {
+        fun success() {
             // Arrange
-            String deliveryId = "delivery-1234";
-            var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(REQUEST);
+            val deliveryId = "delivery-1234"
+            val delivery = makeValidDeliveryWithDeliveryStatus(REQUEST)
 
-            when(deliveryRepository.findById(anyString())).thenReturn(Mono.just(delivery));
-            when(deliveryRepository.save(isA(Delivery.class))).thenReturn(Mono.just(delivery));
-            when(deliveryPublisher.sendSetRiderEvent(any())).thenReturn(Mono.just(delivery));
+            Mockito.`when`(deliveryRepository.findById(anyString()))
+                .thenReturn(Mono.just(delivery))
+            Mockito.`when`(
+                deliveryRepository.save(
+                    argThat { this is Delivery }
+                )
+            ).thenReturn(Mono.just(delivery))
+            Mockito.`when`(deliveryPublisher.sendSetRiderEvent(any()))
+                .thenReturn(Mono.just(delivery))
 
             // Act
-            var result = deliveryService.acceptDelivery(deliveryId);
+            val result = deliveryService.acceptDelivery(deliveryId)
 
             // Assert
-            StepVerifier.create(result).expectNext(delivery).verifyComplete();
-            verify(deliveryRepository, times(1)).findById(deliveryId);
-            verify(deliveryRepository, times(1)).save(delivery);
-            verify(deliveryPublisher, times(1)).sendSetRiderEvent(delivery);
+            StepVerifier.create(result).expectNext(delivery).verifyComplete()
+            Mockito.verify(deliveryRepository, Mockito.times(1)).findById(deliveryId)
+            Mockito.verify(deliveryRepository, Mockito.times(1)).save(delivery)
+            Mockito.verify(deliveryPublisher, Mockito.times(1)).sendSetRiderEvent(delivery)
         }
 
         @Test
-        void fail_not_found() {
+        fun fail_not_found() {
             // Arrange
-            String deliveryId = "delivery-1234";
+            val deliveryId = "delivery-1234"
 
-            when(deliveryRepository.findById(anyString())).thenReturn(Mono.empty());
+            Mockito.`when`(deliveryRepository.findById(anyString()))
+                .thenReturn(Mono.empty())
 
             // Act
-            var result = deliveryService.acceptDelivery(deliveryId);
+            val result = deliveryService.acceptDelivery(deliveryId)
 
             // Assert
-            StepVerifier.create(result).expectError(DeliveryNotFoundException.class).verify();
-            verify(deliveryRepository, times(0)).save(any());
-            verify(deliveryPublisher, times(0)).sendSetRiderEvent(any());
+            StepVerifier.create(result).expectError(
+                DeliveryNotFoundException::class.java
+            ).verify()
+            Mockito.verify(deliveryRepository, Mockito.times(0)).save(any())
+            Mockito.verify(deliveryPublisher, Mockito.times(0))
+                .sendSetRiderEvent(any())
         }
 
         @Test
-        void fail_delivery_status_is_not_request() {
+        fun fail_delivery_status_is_not_request() {
             // Arrange
-            String deliveryId = "delivery-1234";
-            var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(ACCEPT);
+            val deliveryId = "delivery-1234"
+            val delivery = makeValidDeliveryWithDeliveryStatus(ACCEPT)
 
-            when(deliveryRepository.findById(anyString())).thenReturn(Mono.just(delivery));
+            Mockito.`when`(deliveryRepository.findById(anyString()))
+                .thenReturn(Mono.just(delivery))
 
             // Act
-            var result = deliveryService.acceptDelivery(deliveryId);
+            val result = deliveryService.acceptDelivery(deliveryId)
 
             // Assert
-            StepVerifier.create(result).expectError(IllegalStateException.class).verify();
-            verify(deliveryRepository, times(1)).findById(deliveryId);
-            verify(deliveryRepository, times(0)).save(any());
-            verify(deliveryPublisher, times(0)).sendSetRiderEvent(any());
-        }
-    }
-
-    @Nested
-    class Set_delivery_rider {
-
-        @Test
-        void success() {
-            // Arrange
-            String deliveryId = "delivery-1234";
-            var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(ACCEPT);
-
-            when(deliveryRepository.findById(anyString())).thenReturn(Mono.just(delivery));
-            when(deliveryRepository.save(delivery)).thenReturn(Mono.just(delivery));
-
-            // Act
-            var result = deliveryService.setDeliveryRider(deliveryId);
-
-            // Assert
-            StepVerifier.create(result).expectNext(delivery).verifyComplete();
-            verify(deliveryRepository, times(1)).findById(deliveryId);
-            verify(deliveryRepository, times(1)).save(delivery);
-        }
-
-        @Test
-        void fail_delivery_status_is_not_accept() {
-            // Arrange
-            String deliveryId = "delivery-1234";
-            var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(REQUEST);
-
-            when(deliveryRepository.findById(anyString())).thenReturn(Mono.just(delivery));
-
-            // Act
-            var result = deliveryService.setDeliveryRider(deliveryId);
-
-            // Assert
-            StepVerifier.create(result).expectError(IllegalStateException.class).verify();
-            verify(deliveryRepository, times(1)).findById(deliveryId);
-            verify(deliveryRepository, times(0)).save(any());
+            StepVerifier.create(result).expectError(IllegalStateException::class.java).verify()
+            Mockito.verify(deliveryRepository, Mockito.times(1)).findById(deliveryId)
+            Mockito.verify(deliveryRepository, Mockito.times(0)).save(any())
+            Mockito.verify(deliveryPublisher, Mockito.times(0))
+                .sendSetRiderEvent(any())
         }
     }
 
     @Nested
-    class Pick_up_delivery {
-
+    internal inner class Set_delivery_rider {
         @Test
-        void success() {
+        fun success() {
             // Arrange
-            String deliveryId = "delivery-1234";
-            var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(RIDER_SET);
+            val deliveryId = "delivery-1234"
+            val delivery = makeValidDeliveryWithDeliveryStatus(ACCEPT)
 
-            when(deliveryRepository.findById(anyString())).thenReturn(Mono.just(delivery));
-            when(deliveryRepository.save(delivery)).thenReturn(Mono.just(delivery));
+            Mockito.`when`(deliveryRepository.findById(anyString()))
+                .thenReturn(Mono.just(delivery))
+            Mockito.`when`(deliveryRepository.save(delivery)).thenReturn(Mono.just(delivery))
 
             // Act
-            var result = deliveryService.pickUpDelivery(deliveryId);
+            val result = deliveryService.setDeliveryRider(deliveryId)
 
             // Assert
-            StepVerifier.create(result).expectNext(delivery).verifyComplete();
-            verify(deliveryRepository, times(1)).findById(deliveryId);
-            verify(deliveryRepository, times(1)).save(delivery);
+            StepVerifier.create(result).expectNext(delivery).verifyComplete()
+            Mockito.verify(deliveryRepository, Mockito.times(1)).findById(deliveryId)
+            Mockito.verify(deliveryRepository, Mockito.times(1)).save(delivery)
         }
 
         @Test
-        void fail_delivery_status_is_not_set_rider() {
+        fun fail_delivery_status_is_not_accept() {
             // Arrange
-            String deliveryId = "delivery-1234";
-            var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(REQUEST);
+            val deliveryId = "delivery-1234"
+            val delivery = makeValidDeliveryWithDeliveryStatus(REQUEST)
 
-            when(deliveryRepository.findById(anyString())).thenReturn(Mono.just(delivery));
+            Mockito.`when`(deliveryRepository.findById(anyString()))
+                .thenReturn(Mono.just(delivery))
 
             // Act
-            var result = deliveryService.pickUpDelivery(deliveryId);
+            val result = deliveryService.setDeliveryRider(deliveryId)
 
             // Assert
-            StepVerifier.create(result).expectError(IllegalStateException.class).verify();
-            verify(deliveryRepository, times(1)).findById(deliveryId);
-            verify(deliveryRepository, times(0)).save(any());
-        }
-    }
-
-    @Nested
-    class Complete_delivery {
-
-        @Test
-        void success() {
-            // Arrange
-            String deliveryId = "delivery-1234";
-            var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(PICKED_UP);
-
-            when(deliveryRepository.findById(anyString())).thenReturn(Mono.just(delivery));
-            when(deliveryRepository.save(delivery)).thenReturn(Mono.just(delivery));
-
-            // Act
-            var result = deliveryService.completeDelivery(deliveryId);
-
-            // Assert
-            StepVerifier.create(result).expectNext(delivery).verifyComplete();
-            verify(deliveryRepository, times(1)).findById(deliveryId);
-            verify(deliveryRepository, times(1)).save(delivery);
-        }
-
-        @Test
-        void fail_delivery_status_is_not_picked_up() {
-            // Arrange
-            String deliveryId = "delivery-1234";
-            var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(REQUEST);
-
-            when(deliveryRepository.findById(anyString())).thenReturn(Mono.just(delivery));
-
-            // Act
-            var result = deliveryService.completeDelivery(deliveryId);
-
-            // Assert
-            StepVerifier.create(result).expectError(IllegalStateException.class).verify();
-            verify(deliveryRepository, times(1)).findById(deliveryId);
-            verify(deliveryRepository, times(0)).save(any());
+            StepVerifier.create(result).expectError(IllegalStateException::class.java).verify()
+            Mockito.verify(deliveryRepository, Mockito.times(1)).findById(deliveryId)
+            Mockito.verify(deliveryRepository, Mockito.times(0)).save(any())
         }
     }
 
     @Nested
-    class Retry_back_of_spec {
-
-        /*todo 재시도가 수행되지 않음을 발견
-
+    internal inner class Pick_up_delivery {
         @Test
-        void retries_on_timeout_exception() {
+        fun success() {
             // Arrange
-            final Delivery delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(REQUEST);
+            val deliveryId = "delivery-1234"
+            val delivery = makeValidDeliveryWithDeliveryStatus(RIDER_SET)
 
-            when(deliveryRepository.save(delivery)).thenReturn(Mono.just(delivery));
-            when(deliveryPublisher.sendAddDeliveryEvent(any(Delivery.class)))
-                .thenReturn(Mono.error(new TimeoutException()));
+            Mockito.`when`(deliveryRepository.findById(anyString()))
+                .thenReturn(Mono.just(delivery))
+            Mockito.`when`(deliveryRepository.save(delivery)).thenReturn(Mono.just(delivery))
+
             // Act
-            var result = deliveryService.saveDelivery(delivery);
+            val result = deliveryService.pickUpDelivery(deliveryId)
 
             // Assert
-            StepVerifier.create(result).expectError(RetryExhaustedException.class).verify();
-            verify(deliveryPublisher, times(1)).sendAddDeliveryEvent(any(Delivery.class));
+            StepVerifier.create(result).expectNext(delivery).verifyComplete()
+            Mockito.verify(deliveryRepository, Mockito.times(1)).findById(deliveryId)
+            Mockito.verify(deliveryRepository, Mockito.times(1)).save(delivery)
         }
-        */
+
+        @Test
+        fun fail_delivery_status_is_not_set_rider() {
+            // Arrange
+            val deliveryId = "delivery-1234"
+            val delivery = makeValidDeliveryWithDeliveryStatus(REQUEST)
+
+            Mockito.`when`(deliveryRepository.findById(anyString()))
+                .thenReturn(Mono.just(delivery))
+
+            // Act
+            val result = deliveryService.pickUpDelivery(deliveryId)
+
+            // Assert
+            StepVerifier.create(result).expectError(IllegalStateException::class.java).verify()
+            Mockito.verify(deliveryRepository, Mockito.times(1)).findById(deliveryId)
+            Mockito.verify(deliveryRepository, Mockito.times(0)).save(any())
+        }
+    }
+
+    @Nested
+    internal inner class CompleteDelivery {
+        @Test
+        fun success() {
+            // Arrange
+            val deliveryId = "delivery-1234"
+            val delivery = makeValidDeliveryWithDeliveryStatus(PICKED_UP)
+
+            Mockito.`when`(deliveryRepository.findById(anyString()))
+                .thenReturn(Mono.just(delivery))
+            Mockito.`when`(deliveryRepository.save(delivery)).thenReturn(Mono.just(delivery))
+
+            // Act
+            val result = deliveryService.completeDelivery(deliveryId)
+
+            // Assert
+            StepVerifier.create(result).expectNext(delivery).verifyComplete()
+            Mockito.verify(deliveryRepository, Mockito.times(1)).findById(deliveryId)
+            Mockito.verify(deliveryRepository, Mockito.times(1)).save(delivery)
+        }
+
+        @Test
+        fun fail_delivery_status_is_not_picked_up() {
+            // Arrange
+            val deliveryId = "delivery-1234"
+            val delivery = makeValidDeliveryWithDeliveryStatus(REQUEST)
+
+            Mockito.`when`(deliveryRepository.findById(anyString()))
+                .thenReturn(Mono.just(delivery))
+
+            // Act
+            val result = deliveryService.completeDelivery(deliveryId)
+
+            // Assert
+            StepVerifier.create(result).expectError(IllegalStateException::class.java).verify()
+            Mockito.verify(deliveryRepository, Mockito.times(1)).findById(deliveryId)
+            Mockito.verify(deliveryRepository, Mockito.times(0)).save(any())
+        }
     }
 }
