@@ -1,24 +1,19 @@
-package com.potatorider.deliveryinfoservice.domain;
+package com.potatorider.deliveryinfoservice.domain
 
-import static com.potatorider.domain.DeliveryStatus.ACCEPT;
-import static com.potatorider.domain.DeliveryStatus.COMPLETE;
-import static com.potatorider.domain.DeliveryStatus.REQUEST;
+import com.potatorider.domain.DeliveryStatus.*
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.jupiter.api.Test;
-
-public class DeliveryStatusTests {
-
+class DeliveryStatusTests {
     @Test
-    void get_next_is_not_last() {
+    fun get_next_is_not_last() {
         // Act + Assert
-        assertThat(REQUEST.getNext()).isEqualTo(ACCEPT);
+        assertThat(REQUEST.next).isEqualTo(ACCEPT)
     }
 
     @Test
-    void get_next_is_last() {
+    fun get_next_is_last() {
         // Act + Assert
-        assertThat(COMPLETE.getNext()).isEqualTo(COMPLETE);
+        assertThat(COMPLETE.next).isEqualTo(COMPLETE)
     }
 }
