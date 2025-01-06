@@ -61,7 +61,7 @@ class DeliveryServiceTests {
     }
 
     @Nested
-    internal inner class Accept_delivery {
+    internal inner class AcceptDelivery {
         @Test
         fun success() {
             // Arrange
@@ -130,7 +130,7 @@ class DeliveryServiceTests {
     }
 
     @Nested
-    internal inner class Set_delivery_rider {
+    internal inner class SetDeliveryRider {
         @Test
         fun success() {
             // Arrange
@@ -170,7 +170,7 @@ class DeliveryServiceTests {
     }
 
     @Nested
-    internal inner class Pick_up_delivery {
+    internal inner class PickUpDelivery {
         @Test
         fun success() {
             // Arrange
