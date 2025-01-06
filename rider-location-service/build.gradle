@@ -153,6 +153,9 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
+	// kotlin + mockito 함수 스타일 mock
+	testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
+
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.testcontainers:junit-jupiter'

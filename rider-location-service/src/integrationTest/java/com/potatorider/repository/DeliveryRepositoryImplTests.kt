@@ -4,12 +4,11 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import org.mockito.Spy
-import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.http.HttpHeaders
@@ -22,12 +21,14 @@ import reactor.test.StepVerifier
 import java.util.stream.Stream
 
 @AutoConfigureWireMock(port = 0)
-@ExtendWith(MockitoExtension::class)
+//@ExtendWith(MockitoExtension::class)
+@SpringBootTest
 class DeliveryRepositoryImplTests {
 
     @SpyBean
     private lateinit var deliveryRepository: DeliveryRepositoryImpl
 
+    @Autowired
     lateinit var wireMockServer: WireMockServer
 
     private val mapper = ObjectMapper()
