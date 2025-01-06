@@ -1,32 +1,26 @@
-package com.potatorider.repository;
+package com.potatorider.repository
 
-import lombok.Setter;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
-import org.springframework.web.reactive.function.client.WebClient;
-
-import reactor.core.publisher.Mono;
+import lombok.Setter
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Repository
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
 
 @Repository
-public class DeliveryRepositoryImpl implements DeliveryRepository {
+open class DeliveryRepositoryImpl(
+    private val webClientBuilder: WebClient.Builder
+) : DeliveryRepository {
 
-    private final WebClient webClient;
+    @Value("\${services.deliveryInfoService.path}")
+    lateinit var uriDeliveryInfoService: String
 
-    @Value("${services.deliveryInfoService.path}")
-    @Setter
-    private String uriDeliveryInfoService;
+    private val webClient: WebClient = webClientBuilder.build()
 
-    public DeliveryRepositoryImpl() {
-        this.webClient = WebClient.builder().build();
-    }
-
-    @Override
-    public Mono<Boolean> isPickedUp(final String deliveryId) {
+    override fun isPickedUp(deliveryId: String): Mono<Boolean> {
         return webClient
-                .get()
-                .uri(uriDeliveryInfoService + "/api/v1/delivery/" + deliveryId + "/is-picked-up")
-                .retrieve()
-                .bodyToMono(Boolean.class);
+            .get()
+            .uri("$uriDeliveryInfoService/api/v1/delivery/$deliveryId/is-picked-up")
+            .retrieve()
+            .bodyToMono(Boolean::class.java)
     }
 }

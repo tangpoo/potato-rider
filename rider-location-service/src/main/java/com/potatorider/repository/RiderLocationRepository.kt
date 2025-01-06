@@ -1,14 +1,12 @@
-package com.potatorider.repository;
+package com.potatorider.repository
 
-import com.potatorider.domain.RiderLocation;
+import com.potatorider.domain.RiderLocation
+import reactor.core.publisher.Mono
 
-import reactor.core.publisher.Mono;
+interface RiderLocationRepository {
+    fun setIfPresent(riderLocation: RiderLocation): Mono<Boolean>
 
-public interface RiderLocationRepository {
+    fun setIfAbsent(riderLocation: RiderLocation): Mono<Boolean>
 
-    Mono<Boolean> setIfPresent(RiderLocation riderLocation);
-
-    Mono<Boolean> setIfAbsent(RiderLocation riderLocation);
-
-    Mono<RiderLocation> getLocation(String locationId);
+    fun getLocation(locationId: String): Mono<RiderLocation>
 }
