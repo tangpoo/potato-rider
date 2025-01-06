@@ -1,65 +1,66 @@
-package com.potatorider.deliveryinfoservice.publisher;
+package com.potatorider.deliveryinfoservice.publisher
 
-import static com.potatorider.domain.DeliveryStatus.ACCEPT;
-import static com.potatorider.domain.DeliveryStatus.REQUEST;
+import com.potatorider.deliveryinfoservice.domain.DeliverySteps.makeValidDeliveryWithDeliveryStatus
+import com.potatorider.domain.Delivery
+import com.potatorider.domain.DeliveryStatus
+import com.potatorider.publihser.DeliveryMessagePublisherImpl
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.*
+import org.mockito.Mockito
+import org.mockito.Mockito.*
+import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.amqp.core.AmqpTemplate
+import reactor.test.StepVerifier
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import com.potatorider.deliveryinfoservice.domain.DeliverySteps;
-import com.potatorider.domain.Delivery;
-import com.potatorider.publihser.DeliveryMessagePublisherImpl;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.amqp.core.AmqpTemplate;
-
-import reactor.test.StepVerifier;
-
-@ExtendWith(MockitoExtension.class)
-public class DeliveryMessagePublisherImplTests {
-
-    private final String shopExchange = "messageQueue.exchange.shop";
-    private final String agencyExchange = "messageQueue.exchange.agency";
-    DeliveryMessagePublisherImpl deliveryPublisher;
-    AmqpTemplate amqpTemplate;
+@ExtendWith(MockitoExtension::class)
+class DeliveryMessagePublisherImplTests {
+    private val shopExchange = "messageQueue.exchange.shop"
+    private val agencyExchange = "messageQueue.exchange.agency"
+    private lateinit var deliveryPublisher: DeliveryMessagePublisherImpl
+    private lateinit var amqpTemplate: AmqpTemplate
 
     @BeforeEach
-    void setUp() {
-        amqpTemplate = mock(AmqpTemplate.class);
-        deliveryPublisher = new DeliveryMessagePublisherImpl(amqpTemplate);
+    fun setUp() {
+        amqpTemplate = mock(AmqpTemplate::class.java)
+        deliveryPublisher = DeliveryMessagePublisherImpl(amqpTemplate)
     }
 
     @Test
-    void send_add_delivery_event() {
+    fun send_add_delivery_event() {
         // Arrange
-        var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(REQUEST);
+        val delivery = makeValidDeliveryWithDeliveryStatus(DeliveryStatus.REQUEST)
 
         // Act
-        var result = deliveryPublisher.sendAddDeliveryEvent(delivery);
+        val result = deliveryPublisher.sendAddDeliveryEvent(delivery)
 
         // Assert
-        StepVerifier.create(result).expectNext(delivery).verifyComplete();
+        StepVerifier.create(result).expectNext(delivery).verifyComplete()
         verify(amqpTemplate, times(1))
-                .convertAndSend(eq(shopExchange), any(String.class), any(Delivery.class));
+            .convertAndSend(
+                eq(shopExchange), any(
+                    String::class.java
+                ), any(Delivery::class.java)
+            )
     }
 
     @Test
-    void send_set_rider_event() {
+    fun send_set_rider_event() {
         // Arrange
-        var delivery = DeliverySteps.makeValidDeliveryWithDeliveryStatus(ACCEPT);
+        val delivery = makeValidDeliveryWithDeliveryStatus(DeliveryStatus.ACCEPT)
 
         // Act
-        var result = deliveryPublisher.sendSetRiderEvent(delivery);
+        val result = deliveryPublisher.sendSetRiderEvent(delivery)
 
         // Assert
-        StepVerifier.create(result).expectNext(delivery).verifyComplete();
+        StepVerifier.create(result).expectNext(delivery).verifyComplete()
         verify(amqpTemplate, times(1))
-                .convertAndSend(eq(agencyExchange), any(String.class), any(Delivery.class));
+            .convertAndSend(
+                eq(agencyExchange), any(
+                    String::class.java
+                ), any(Delivery::class.java)
+            )
     }
 }
