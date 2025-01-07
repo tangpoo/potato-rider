@@ -24,7 +24,7 @@ interface DeliveryControllerSwaggerDoc {
     fun completeDelivery(deliveryId: String): Mono<Delivery>
 
     @Operation(summary = "배송 조회")
-    fun findDelivery(deliverId: String): Mono<Delivery>
+    fun findDelivery(deliveryId: String): Mono<Delivery>
 
     @Operation(summary = "전체 배송 조회")
     fun findAllDelivery(page: Int, size: Int): Flux<Delivery>
