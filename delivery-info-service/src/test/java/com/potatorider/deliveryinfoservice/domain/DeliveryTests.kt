@@ -1,9 +1,6 @@
 package com.potatorider.deliveryinfoservice.domain
 
-import com.potatorider.deliveryinfoservice.domain.DeliverySteps.makeValidDeliveryWithDeliveryStatus
-import com.potatorider.domain.DeliveryStatus
 import com.potatorider.domain.DeliveryStatus.*
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 
